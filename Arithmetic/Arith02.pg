@@ -1,0 +1,81 @@
+## -*- perl -*- ##
+## Line above puts emacs in perl mode
+##
+## Description  
+##   This is a generic problem template
+## EndDescription
+
+## Tagged by ynw2d
+
+## DBsubject(Calculus - multivariable)
+## DBchapter(Vector functions)
+## DBsection(Derivatives and Integrals of Vector Functions)
+## Author(Stewart)
+
+DOCUMENT();
+loadMacros("PG.pl",
+           "PGbasicmacros.pl",
+           "PGchoicemacros.pl",
+           "PGanswermacros.pl",
+           "PGauxiliaryFunctions.pl",
+           "PGgraphmacros.pl",
+           "Dartmouthmacros.pl");
+ 
+
+## Do NOT show partial correct answers
+$showPartialCorrectAnswers = 0;
+
+@questions = (
+              "Area Model for Multiplication",
+              "Cartesian Product Model for Multiplication",
+              "Missing Factor for Division",
+              "Partition Model for Division",
+              "Repeated Addition for Multiplication",
+              "Repeated Subtraction for Division"
+              );
+
+@images = (
+            "Area.png",
+            "Cartesian.png",
+            "missing_factor.png",
+            "partition.png",
+            "repeated_addition.png",
+            "repeated_subtraction.png"
+            );
+
+@subset = NchooseK(6,6);
+
+@subset_of_questions = @questions[@subset];
+@subset_of_images = @images[@subset];
+
+@permutation = NchooseK(6,6);
+@shuffled_subset_of_images = @subset_of_images[@permutation];
+
+
+@captions = @ALPHABET[0..5];
+
+## Ok, we are ready to begin the problem...
+##
+TEXT(beginproblem());
+
+
+BEGIN_TEXT
+$BR
+
+Match each diagram with the model of whole number multiplication or division that it illustrates.
+
+$PAR
+END_TEXT
+
+BEGIN_TEXT
+     \{ match_questions_list(@subset_of_questions)\}
+     $BCENTER
+     $BBOLD Note: $EBOLD You may click on an image to open up a larger version of it in a new window. 
+     $BR
+     $BR
+     \{imageRow(~~@shuffled_subset_of_images,~~@captions)\}
+     $ECENTER
+END_TEXT
+
+ANS(str_cmp([@ALPHABET[invert(@permutation)]]));
+ENDDOCUMENT();

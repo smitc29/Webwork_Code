@@ -1,0 +1,81 @@
+## -*- perl -*- ##
+## Line above puts emacs in perl mode
+##
+## Description  
+##   This is a generic problem template
+## EndDescription
+
+## Tagged by ynw2d
+
+## DBsubject(Calculus - multivariable)
+## DBchapter(Vector functions)
+## DBsection(Derivatives and Integrals of Vector Functions)
+## Author(Stewart)
+
+DOCUMENT();
+loadMacros("PG.pl",
+           "PGbasicmacros.pl",
+           "PGchoicemacros.pl",
+           "PGanswermacros.pl",
+           "PGauxiliaryFunctions.pl",
+           "PGgraphmacros.pl",
+           "Dartmouthmacros.pl");
+ 
+
+## Do NOT show partial correct answers
+$showPartialCorrectAnswers = 0;
+
+@questions = (
+              "Set Model for Addition",
+              "Take Away Model for Subtraction",
+              "Comparison Model for Subtraction",
+              "Missing Addend Model for Subtraction",
+              "Number Line Model for Addition",
+              "Number Line Model for Subtraction"
+              );
+
+@images = (
+            "setModelAdd.png",
+            "takeawaySub.png",
+            "comparisonSub.png",
+            "missing_addendSub.png",
+            "numlineadd.png",
+            "numlinesub.png"
+            );
+
+@subset = NchooseK(6,6);
+
+@subset_of_questions = @questions[@subset];
+@subset_of_images = @images[@subset];
+
+@permutation = NchooseK(6,6);
+@shuffled_subset_of_images = @subset_of_images[@permutation];
+
+
+@captions = @ALPHABET[0..5];
+
+## Ok, we are ready to begin the problem...
+##
+TEXT(beginproblem());
+
+
+BEGIN_TEXT
+$BR
+
+Match each diagram with the model of whole number addition or subtraction that it illustrates.
+
+$PAR
+END_TEXT
+
+BEGIN_TEXT
+     \{ match_questions_list(@subset_of_questions)\}
+     $BCENTER
+     $BBOLD Note: $EBOLD You may click on an image to open up a larger version of it in a new window. 
+     $BR
+     $BR
+     \{imageRow(~~@shuffled_subset_of_images,~~@captions)\}
+     $ECENTER
+END_TEXT
+
+ANS(str_cmp([@ALPHABET[invert(@permutation)]]));
+ENDDOCUMENT();
