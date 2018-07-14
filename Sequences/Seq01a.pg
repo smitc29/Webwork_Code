@@ -1,0 +1,135 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+
+
+## DBsubject(WeBWorK)
+## DBchapter(Critical Thinking)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(04/26/2018)
+## Institution(SUNY Oneonta)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('sequence','pattern')
+
+
+###########################
+#  Initialization
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"parserPopUp.pl",
+  "PGstandard.pl",
+  "PGML.pl",
+  "MathObjects.pl",
+  "parserMultiAnswer.pl",
+  "scaffold.pl",
+  "PGcourse.pl",
+  "PGbasicmacros.pl",
+  "PGchoicemacros.pl",
+  "PGanswermacros.pl",
+  "PGgraphmacros.pl",
+  "extraAnswerEvaluators.pl",
+  "PGauxiliaryFunctions.pl",
+  "contextArbitraryString.pl",
+  "parserOneOf.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+# the arguments of PopUp are [list of answers], correct answer
+# Answer to Dropdown menu in part 2   
+$popup = PopUp(["-----------", "arithmetic", "geometric", "neither"], "arithmetic");
+
+Context()->variables->add(c => "Real");
+
+$start = random(2,20);
+$multiple = random(4,14);
+
+Context()->variables->add(n => "Real");
+$part1Form = Formula("$start + $multiple * n"); # Requires VERY careful phrasing, but works
+
+# Answer to part 3 is stored locally only as a formula
+
+# Answer to part 4, 
+$x = random(40,60);
+$temp = $x - 1; # Can't alter x, need it for presentation purposes
+
+
+
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Part 1: Analyzing Sequences");
+
+Context()->texStrings;
+BEGIN_PGML
+
+Assume the pattern continues. Find the next three terms in the following sequence:
+
+[$part1Form->eval(n=>0)], [$part1Form->eval(n=>1)], [$part1Form->eval(n=>2)], [$part1Form->eval(n=>3)], [$part1Form->eval(n=>4)], [__]{$part1Form->eval(n=>5)}, [__]{$part1Form->eval(n=>6)}, [__]{$part1Form->eval(n=>7)}
+
+END_PGML
+
+Section::End();
+
+###########################################
+Section::Begin("Part 2: Categorizing Sequences");
+
+BEGIN_TEXT
+
+Is the sequence arithmetic, geometric or neither?
+\{ $popup->menu() \}
+
+END_TEXT
+
+ANS( $popup->cmp() );
+
+Context()->texStrings;
+
+Context()->normalStrings;
+
+Section::End();
+
+###########################################
+Section::Begin("Part 3: Formulas for Sequences");
+
+#Context("ArbitraryString");
+Context("Numeric"); # Must define all letters used in math formula
+Context()->variables->add(n => 'Real');
+
+$SeqForm = Formula("$start + $multiple (n-1)");
+
+BEGIN_PGML
+
+Find a formula for the nth term of the sequence ([`a_{n}`]):
+[@ $PAR @]*
+Use the variable [`a`] as the first term in the sequence, and [`d`] as the constant difference.  
+    
+[@ $PAR @]*
+[`a_{n}`] = [_____________]{$SeqForm}
+
+END_PGML
+
+# [`a_{n}`] = [_____________]{OneOf('a-d(n-1)','a-dn+d','a - d(n - 1)')}
+# This was the original answer checker if current answer checker stops working
+
+Context()->normalStrings;
+Section::End();
+
+###########################################
+Section::Begin("Part 4: Finding Terms in a Sequence");
+
+BEGIN_PGML
+
+Find the [$x]th term of the sequence used in part 1. [_______]{$part1Form->eval(n=>$temp)}
+
+END_PGML
+
+Section::End();
+###########################################
+
+Scaffold::End();
+ENDDOCUMENT();

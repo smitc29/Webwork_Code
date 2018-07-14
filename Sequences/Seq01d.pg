@@ -1,0 +1,113 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+
+
+## DBsubject(WeBWorK)
+## DBchapter(Critical Thinking)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(04/26/2018)
+## Institution(SUNY Oneonta)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('sequence','pattern')
+
+
+###########################
+#  Initialization
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"parserPopUp.pl",
+  "PGstandard.pl",
+  "PGML.pl",
+  "MathObjects.pl",
+  "parserMultiAnswer.pl",
+  "scaffold.pl",
+  "PGcourse.pl",
+  "PGbasicmacros.pl",
+  "PGchoicemacros.pl",
+  "PGanswermacros.pl",
+  "PGgraphmacros.pl",
+  "extraAnswerEvaluators.pl",
+  "PGauxiliaryFunctions.pl",
+  "contextArbitraryString.pl",
+  "parserOneOf.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+# the arguments of PopUp are [list of answers], correct answer
+# Answer to Dropdown menu in part 2   
+$popup = PopUp(["-----------", "arithmetic", "geometric", "neither"], "arithmetic");
+
+$start = random(4,15);
+$multiple = random(-3,-11);
+
+# Answer to part 3 is stored locally only as a formula
+
+Context()->variables->add(n => "Real");
+$part1Form = Formula("$start + $multiple * n"); # Requires VERY careful phrasing, but works
+
+# Answer to part 4, 
+$x = random(40,60);
+$temp = $x - 1; # Can't alter x, need it for presentation purposes
+
+Context()->texStrings;
+BEGIN_PGML
+[@ $PAR @]*  
+*Part A:*  
+[@ $PAR @]*
+Assume the pattern continues. Find the next three terms in the following sequence:
+
+[$part1Form->eval(n=>0)], [$part1Form->eval(n=>1)], [$part1Form->eval(n=>2)], [$part1Form->eval(n=>3)], [$part1Form->eval(n=>4)], [__]{$part1Form->eval(n=>5)}, [__]{$part1Form->eval(n=>6)}, [__]{$part1Form->eval(n=>7)}
+[@ $PAR @]*
+END_PGML
+
+
+BEGIN_TEXT
+$BR
+$BBOLD Part B: $EBOLD
+$BR
+$BR
+Is the sequence arithmetic, geometric or neither?
+\{ $popup->menu() \}
+$BR
+END_TEXT
+
+ANS( $popup->cmp() );
+
+#Context("ArbitraryString");
+Context("Numeric"); # Must define all letters used in math formula
+Context()->variables->add(n => 'Real');
+
+$SeqForm = Formula("$start + $multiple (n-1)");
+
+BEGIN_PGML
+[@ $PAR @]*  
+*Part C:*  
+[@ $PAR @]*
+Find a formula for the nth term of the sequence ([`a_{n}`]):
+[@ $PAR @]*
+Use the variable [`a`] as the first term in the sequence, and [`d`] as the constant difference.  
+    
+[@ $PAR @]*
+[`a_{n}`] = [_____________]{$SeqForm} 
+
+END_PGML
+
+# [`a_{n}`] = [_____________]{OneOf('a-d(n-1)','a-dn+d','a - d(n - 1)')}
+# This was the original answer checker if current answer checker stops working
+Context()->normalStrings;
+
+BEGIN_PGML
+[@ $PAR @]*  
+*Part D:*  
+[@ $PAR @]*
+Find the [$x]th term of the sequence used in *Part A*. [_______]{$part1Form->eval(n=>$temp)}
+
+END_PGML
+
+ENDDOCUMENT();

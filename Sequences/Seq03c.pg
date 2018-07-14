@@ -1,0 +1,117 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+## DBsubject(WeBWorK)
+## DBchapter(Critical Thinking)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(04/26/2018)
+## Institution(SUNY Oneonta)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('sequence','pattern')
+
+
+###########################
+#  Initialization
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"parserPopUp.pl",
+  "PGstandard.pl",
+  "PGML.pl",
+  "MathObjects.pl",
+  "parserMultiAnswer.pl",
+  "scaffold.pl",
+  "PGcourse.pl",
+  "PGbasicmacros.pl",
+  "PGchoicemacros.pl",
+  "PGanswermacros.pl",
+  "PGgraphmacros.pl",
+  "extraAnswerEvaluators.pl",
+  "PGauxiliaryFunctions.pl",
+  "contextArbitraryString.pl",
+  "parserOneOf.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+# Part A Answers / values
+$RanVal = random(2,6); # Initial n value, needed as global variable
+$constant = random(-5,5); # Constant applied to each number in sequence
+while($constant == 0)
+{
+    $constant = random(-5,5); # Ensure constant is not 0
+}
+
+# the arguments of PopUp are [list of answers], correct answer
+# Answer to Dropdown menu in part 2   
+$popup = PopUp(["-----------", "arithmetic", "geometric", "neither"], "neither");
+
+Context()->variables->add(c => "Real");
+
+$start = random(2,6);
+$multiple = random(2,5);
+
+# Answer to part 3 is stored locally only as a formula
+
+$part1Form = Formula("x^2 + $constant"); # Requires VERY careful phrasing, but works
+
+# Answer to part 4, 
+$x = random(20,40);
+$temp = $x; # Can't alter x, need it for presentation purposes
+
+Context()->texStrings;
+BEGIN_PGML
+[@ $PAR @]*  
+*Part A:*  
+[@ $PAR @]*
+Assume the pattern continues. Find the next three terms in the following sequence:
+
+[$part1Form->eval(x=>$RanVal)], [$part1Form->eval(x=>$RanVal+1)], [$part1Form->eval(x=>$RanVal+2)], [$part1Form->eval(x=>$RanVal+3)], [$part1Form->eval(x=>$RanVal+4)], [__]{$part1Form->eval(x=>$RanVal+5)}, [__]{$part1Form->eval(x=>$RanVal+6)}, [__]{$part1Form->eval(x=>$RanVal+7)}
+[@ $PAR @]*
+END_PGML
+
+BEGIN_TEXT
+$BR
+$BBOLD Part B: $EBOLD
+$BR
+$BR
+Is the sequence arithmetic, geometric or neither?
+\{ $popup->menu() \}
+$BR
+END_TEXT
+
+ANS( $popup->cmp() );
+
+#Context("ArbitraryString");
+Context("Numeric"); # Must define all letters used in math formula
+Context()->variables->add(d => 'Real');
+Context()->variables->add(n => 'Real');
+
+$SeqForm = Formula("(n^2) + d");
+
+BEGIN_PGML
+[@ $PAR @]*  
+*Part C:*  
+[@ $PAR @]*
+Find a formula for the nth term of the sequence ([`a_{n}`]):
+[@ $PAR @]*
+Use the variable [`a`] as the first term in the sequence, and [`d`] as the constant difference.  
+    
+[@ $PAR @]*
+[`a_{n}`] = [_____________]{$SeqForm}
+
+END_PGML
+Context()->normalStrings;
+
+BEGIN_PGML
+[@ $PAR @]*  
+*Part D:*  
+[@ $PAR @]*
+Find the [$x]th term of the sequence used in *Part A*. [________________]{$part1Form->eval(x=>$temp)}
+
+END_PGML
+
+ENDDOCUMENT();
