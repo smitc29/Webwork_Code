@@ -1,0 +1,81 @@
+##DESCRIPTION
+##  Algebra: Fraction simplification
+##ENDDESCRIPTION
+
+
+## DBsubject(Arithmetic)
+## DBchapter(Fractions/rational numbers)
+## DBsection(Reducing fractions)
+## Date(09/30/2009)
+## Institution(University of Minnesota)
+## Author(Justin Sukiennik)
+## Level(2)
+## MO(1)
+## TitleText1('Algebra for College Students')
+## AuthorText1('Kaufmann, Schwitters')
+## EditionText1('8')
+## Section1('4.1')
+## Problem1('8')
+## KEYWORDS('algebra', 'fraction')
+
+########################################################################
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+  "PGcourse.pl"
+);
+
+########################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 0;
+
+########################################################################
+
+Context("Numeric");
+
+
+
+$a = random(56342,82356,2);
+
+$b = 10000;
+
+for($i = $a; $i > 0; $i--)
+{
+	if($a % $i == 0 && $b % $i == 0) # If both numerator and denominator are evenly divisible by loop value...
+	{
+		$a /= $i; # Divide them by the current loop value, reducing them!
+		$b /= $i;
+	}
+}
+
+$show = $a / $b;
+#$show = sprintf("%0.4s", $show); # Round out the decimal amount
+
+# Use this link if you'd like to change rounding properties: https://perldoc.perl.org/functions/sprintf.html
+
+Context("LimitedFraction"); # Forces answer to be reduced fraction only
+
+$ans = Compute("$a/$b");
+
+########################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Write the repeating decimal \( $show \) as a fraction in lowest terms. $PAR
+Answer: \{ans_rule(20)\}
+END_TEXT
+Context()->normalStrings;
+
+########################################################################
+
+ANS( $ans->cmp() );
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
