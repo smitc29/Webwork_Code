@@ -1,0 +1,150 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+
+
+## DBsubject(WeBWorK)
+## DBchapter(Numeration)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(01/30/2011)
+## Institution(Fort Lewis College)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('Roman','numeration')
+
+
+###########################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "AnswerFormatHelp.pl",
+  "PGcourse.pl"
+);
+
+TEXT(beginproblem());
+
+
+###########################
+#  Setup
+
+Context("Numeric");
+
+#	Presents student with Roman numerals, which when converted provide the answer
+
+$RomanValue = random(444, 3599); #Randomly generated integer value for Roman numeral
+$DecimalAnswer = Compute("$RomanValue"); #Store correct answer value in another variable
+$pi = Real("pi");
+@names = (' ');  # Creates an array for storing variables in
+pop @names;
+
+while ($RomanValue > 999) {
+  push @names, 'M'; # push X value into front of array, 1000s value
+  $RomanValue -= 1000;
+}
+
+if ($RomanValue < 1000 && $RomanValue > 899) {
+  push @names, 'CM'; # push X value into front of array, 900s value
+  $RomanValue -= 900;
+}
+
+while ($RomanValue > 499) {
+  push @names, 'D'; # push X value into front of array, 500s value
+  $RomanValue -= 500;
+}
+
+if ($RomanValue < 500 && $RomanValue > 399) {
+  push @names, 'CD'; # push X value into front of array, 400s value
+  $RomanValue -= 400;
+}
+
+while ($RomanValue > 99) {
+  push @names, 'C'; # push X value into front of array, 100s value
+  $RomanValue -= 100;
+}
+
+if ($RomanValue < 100 && $RomanValue > 89) {
+  push @names, 'XC'; # push X value into front of array, 40s value
+  $RomanValue -= 90;
+}
+
+while ($RomanValue > 49) {
+  push @names, 'L'; # push X value into front of array, 50s value
+  $RomanValue -= 50;
+}
+
+if ($RomanValue < 50 && $RomanValue > 39) {
+  push @names, 'XL'; # push X value into front of array, 40s value
+  $RomanValue -= 40;
+}
+
+while ($RomanValue > 9) {
+  push @names, 'X'; # push X value into front of array, 10s value
+  $RomanValue -= 10;
+}
+
+if($RomanValue == 9)
+{
+	push @names, 'IX'; # push X value into front of array, 9s value
+	$RomanValue -= 9;
+}
+
+while ($RomanValue > 4) {
+  push @names, 'V'; # push X value into front of array, 5s value
+  $RomanValue -= 5;
+}
+
+if($RomanValue == 4)
+{
+	push @names, 'IV'; # push X value into front of array, 9s value
+	$RomanValue -= 4;
+}
+
+while ($RomanValue > 0) {
+  push @names, 'I'; # push function allows you to add content after
+  $RomanValue -= 1;
+}
+
+
+
+###########################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Write the Roman numeral @names as a base 10 (Hindu-Arabic) numeral. 
+$BR $BR 
+\{ ans_rule(20) \}
+
+$BR
+
+END_TEXT
+Context()->normalStrings;
+#\{ AnswerFormatHelp("numbers") \} Use this in texStrings to allows students to see formulas
+
+############################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $DecimalAnswer->cmp() );
+
+
+
+############################
+#  Solution
+
+Context()->texStrings;
+#BEGIN_SOLUTION
+
+#M = 1000, D = 500, C = 100, L = 50, X = 10, V = 5, I = 1
+#END_SOLUTION
+Context()->normalStrings;
+
+
+
+ENDDOCUMENT();

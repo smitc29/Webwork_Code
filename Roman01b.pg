@@ -1,0 +1,154 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+
+
+## DBsubject(WeBWorK)
+## DBchapter(Numeration)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(01/27/2018)
+## Institution(SUNY Oneonta)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('Roman','numeration')
+
+
+###########################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "AnswerFormatHelp.pl",
+  "PGcourse.pl",
+  "contextArbitraryString.pl",
+);
+
+TEXT(beginproblem());
+
+
+###########################
+#  Setup
+
+Context("ArbitraryString");
+#Context()->strings->add(True=>{},False=>{});
+
+#	Presents student with number value that must be converted to Roman numeral string for answer
+
+$Ones = random(0, 9);
+$Tens = list_random(0, 10, 20, 30, 40, 50, 60, 70, 80, 90);
+$Hundreds = list_random(400, 900);
+$Thousands = list_random(0, 1000, 2000, 3000);
+$RomanValue = $Ones + $Tens + $Hundreds + $Thousands; #Randomly generated integer value for Roman numeral
+$ShownValue = $RomanValue; #Shown in the question
+$strAns = (' ');  # Creates a string for storing variables in
+chop $strAns;
+
+while ($RomanValue > 999) {
+  $strAns = join '', $strAns, 'M'; # push X value into front of array, 1000s value
+  $RomanValue -= 1000;
+}
+
+if ($RomanValue < 1000 && $RomanValue > 899) {
+  $strAns = join '', $strAns, 'CM'; # push X value into front of array, 900s value
+  $RomanValue -= 900;
+}
+
+while ($RomanValue > 499) {
+  $strAns = join '', $strAns, 'D'; # push X value into front of array, 500s value
+  $RomanValue -= 500;
+}
+
+if ($RomanValue < 500 && $RomanValue > 399) {
+  $strAns = join '', $strAns, 'CD'; # push X value into front of array, 400s value
+  $RomanValue -= 400;
+}
+
+while ($RomanValue > 99) {
+  $strAns = join '', $strAns, 'C'; # push X value into front of array, 100s value
+  $RomanValue -= 100;
+}
+
+if ($RomanValue < 100 && $RomanValue > 89) {
+  $strAns = join '', $strAns, 'XC'; # push X value into front of array, 40s value
+  $RomanValue -= 90;
+}
+
+while ($RomanValue > 49) {
+  $strAns = join '', $strAns, 'L'; # push X value into front of array, 50s value
+  $RomanValue -= 50;
+}
+
+if ($RomanValue < 50 && $RomanValue > 39) {
+  $strAns = join '', $strAns, 'XL'; # push X value into front of array, 40s value
+  $RomanValue -= 40;
+}
+
+while ($RomanValue > 9) {
+  $strAns = join '', $strAns, 'X'; # push X value into front of array, 10s value
+  $RomanValue -= 10;
+}
+
+if($RomanValue == 9)
+{
+	$strAns = join '', $strAns, 'IX'; # push X value into front of array, 9s value
+	$RomanValue -= 9;
+}
+
+while ($RomanValue > 4) {
+  $strAns = join '', $strAns, 'V'; # push X value into front of array, 5s value
+  $RomanValue -= 5;
+}
+
+if($RomanValue == 4)
+{
+	$strAns = join '', $strAns, 'IV'; # push X value into front of array, 9s value
+	$RomanValue -= 4;
+}
+
+while ($RomanValue > 0) {
+  $strAns = join '', $strAns, 'I'; # push function allows you to add content after
+  $RomanValue -= 1;
+}
+
+#Context()->strings->add(True=>{},False=>{});
+
+
+###########################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+ Write $ShownValue as a Roman numeral: 
+$BR $BR 
+$ShownValue = \{ ans_rule(20) \}
+
+$BR
+
+END_TEXT
+Context()->normalStrings;
+#\{ AnswerFormatHelp("numbers") \} Use this in texStrings to allows students to see formulas
+
+############################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS( Compute($strAns)->cmp());
+
+############################
+#  Solution
+
+Context()->texStrings;
+#BEGIN_SOLUTION
+
+#M = 1000, D = 500, C = 100, L = 50, X = 10, V = 5, I = 1
+#END_SOLUTION
+Context()->normalStrings;
+
+
+
+ENDDOCUMENT();
