@@ -1,0 +1,87 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+## DBsubject(WeBWorK)
+## DBchapter(Consumer_Math)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(03/19/2018)
+## Institution(SUNY Oneonta)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('consumer','math')
+
+
+###########################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "AnswerFormatHelp.pl",
+  "PGcourse.pl",
+  "niceTables.pl",
+  #"contextArbitraryString.pl",
+);
+
+TEXT(beginproblem());
+
+
+###########################
+#  Setup
+
+Context("Complex"); # Used for decimals
+$Ans01 = random(20, 40); # First answer is literally just a number within 100
+
+$Val02 = random(5, 14);
+$Ans02 = sprintf("%0.0f", ($Val02/30) * 100);
+
+$Val03 = random(22, 32);
+$Ans03 = sprintf("%0.0f", ($Val03/55) * 100);
+
+###########################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+ Convert the following fractions to percents. Round to the nearest percent. 
+$BR 
+$BR
+$BCENTER
+$Ans01 / 100 = \{ ans_rule(4) \} %
+$BR 
+$BR
+$Val02 / 30 = \{ ans_rule(4) \} %
+$BR 
+$BR
+$Val03 / 55 = \{ ans_rule(4) \} %
+$ECENTER
+$BR
+
+END_TEXT
+Context()->normalStrings;
+#\{ AnswerFormatHelp("numbers") \} Use this in texStrings to allows students to see formulas
+
+############################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS( Compute($Ans01)->cmp());
+ANS( Compute($Ans02)->cmp());
+ANS( Compute($Ans03)->cmp());
+
+
+############################
+#  Solution
+
+Context()->texStrings;
+#BEGIN_SOLUTION
+
+#< = 10, V = 1, $strAns
+#END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

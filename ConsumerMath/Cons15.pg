@@ -1,0 +1,136 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+## DBsubject(WeBWorK)
+## DBchapter(Consumer_Math)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(03/22/2018)
+## Institution(SUNY Oneonta)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('consumer','math')
+
+###########################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "PGML.pl",
+  "MathObjects.pl",
+  "parserMultiAnswer.pl",
+  "scaffold.pl",
+  "PGcourse.pl",
+);
+TEXT(beginproblem());
+
+
+###########################
+#  Setup
+
+Context("Numeric");
+$prin = random(2000, 3000, 200); # First val, principal
+$time = 180 / 360; # Second val timeframe
+$r = list_random(8, 9, 10); 
+$rate = $r / 100; # Third val, rate of increase
+$partial = list_random(700, 800, 900); # Partial payments made regularly
+
+$Interest01 = $prin * (60/360) * $rate; # Used in answer part 1
+$Interest01 = sprintf("%0.2f", $Interest01);
+$partial01 = $partial - $Interest01; # Subtract interest from partial payment
+$partial01 = sprintf("%0.2f", $partial01);
+$prin01 = $prin - $partial01; # Remaining principal to be paid off
+$prin01 = sprintf("%0.2f", $prin01);
+
+$Interest02 = $prin01 * (60/360) * $rate; # Used in answer part 2
+$Interest02 = sprintf("%0.2f", $Interest02);
+$partial02 = $partial - $Interest02; # Subtract interest from partial payment
+$partial02 = sprintf("%0.2f", $partial02);
+$prin02 = $prin01 - $partial02; # Remaining principal to be paid off
+$prin02 = sprintf("%0.2f", $prin02);
+
+$Interest03 = $prin02 * (60/360) * $rate; # Used in answer part 2
+$Interest03 = sprintf("%0.2f", $Interest03);
+$final = $Interest03 + $prin02; # Final payment, remaining interest and principal
+$final = sprintf("%0.2f", $final); # Dollar amount
+ 
+BEGIN_PGML
+[@ $PAR @]*
+When some part of a simple interest loan is paid off before its date of maturity, this is called a *partial payment*.  
+Since some interest has accrued on the loan, it must decided whether the payment should be applied to the principal or to the interest.
+[@ $PAR @]*
+The *U.S. Rule* states that the interest from the date of the loan to the date of the partial payment should be calculated,  
+and the payment is first applied to the interest. The remainder of the partial payment is then applied to the principal.  
+[@ $PAR @]*
+Any further interest is then applied to the (smaller) principal that remains after that payment.  
+Any further payments use the same process, with interest calculated from the date of the most recent payment.  
+
+A simple interest loan for $[$prin] with a period of 180 days has a [$r]% interest rate.  
+Three payments are made in total: two partial payments of $[$partial] at 60 and 120 days, and then a final payment at maturity.  
+[@ $PAR @]* 
+END_PGML
+
+
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Part 1: Interest built up to first payment");
+
+BEGIN_PGML
+[@ $PAR @]*
+Determine the interest that accrues up to the first payment, the amount of the first payment that can be  
+applied to the principal, and the new principal after this payment.
+[@ $PAR @]* 
+
+Interest = $ [____]{$Interest01}
+[@ $PAR @]*
+Payment towards principal = $ [____]{$partial01}
+[@ $PAR @]*
+Remaining principal = $ [____]{$prin01}
+END_PGML
+
+Section::End();
+
+###########################################
+Section::Begin("Part 2: Interest built up to second payment");
+
+
+BEGIN_PGML
+[@ $PAR @]*
+Determine the interest that accrues between the first and second payments, the amount of the second payment  
+that can be applied to the principal, and the new principal after the second payment.
+[@ $PAR @]* 
+
+Interest = $ [____]{$Interest02}
+[@ $PAR @]*
+Payment towards principal = $ [____]{$partial02}
+[@ $PAR @]*
+Remaining principal = $ [____]{$prin02}
+END_PGML
+
+
+Section::End();
+
+###########################################
+Section::Begin("Part 3: Interest built up to maturity");
+
+BEGIN_PGML
+[@ $PAR @]*
+Determine the interest that accrues between the last payment and maturity, and the final amount that must be paid at maturity.
+[@ $PAR @]* 
+
+Interest = $ [____]{$Interest03}
+[@ $PAR @]*
+Final payment = $ [____]{$final}
+END_PGML
+
+
+
+Section::End();
+
+Scaffold::End();
+ENDDOCUMENT();

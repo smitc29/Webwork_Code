@@ -1,0 +1,88 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+## DBsubject(WeBWorK)
+## DBchapter(Consumer_Math)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(03/19/2018)
+## Institution(SUNY Oneonta)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('consumer','math')
+
+###########################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "AnswerFormatHelp.pl",
+  "PGcourse.pl",
+  "niceTables.pl",
+  #"contextArbitraryString.pl",
+);
+
+TEXT(beginproblem());
+
+
+###########################
+#  Setup
+
+Context("Complex"); # Used for decimals
+
+$Text01 = 'Current  Amount'; # Used for the equation in text
+$Text02 = 'Previous  Amount';
+$Text00 = 'Percent   Change';
+
+$Val01 = random(20, 35, 0.01); # First val 
+#$Val02 = random(20, 40, 0.01); # Second val, not needed for this question 
+$Val03 = random(17.5, 20.5, 0.01);
+$Ans01 = $Val03 - $Val01;
+$Ans01 = $Ans01 / $Val01;
+$Ans01 = sprintf("%0.2f", $Ans01 *= 100);
+
+###########################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+ The $BBOLD percent change $EBOLD of a value over a given time period is given by 
+$BR $BCENTER
+\( $Text00 = \displaystyle \frac{($Text01 - $Text02)}{$Text02} \times 100\)
+ $ECENTER $BR
+ Suppose you invest in a stock priced at $$Val01 per share, and after six months, 
+ $BR
+ the stock price is $$Val03 per share. 
+ $BR
+ What is the percent change in the stock price? (Round to hundredths place)
+$BR
+ $BR
+ \{ ans_rule(4) \} % 
+$BR 
+
+
+END_TEXT
+Context()->normalStrings;
+#\{ AnswerFormatHelp("numbers") \} Use this in texStrings to allows students to see formulas
+
+############################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS( Compute($Ans01)->cmp());
+
+############################
+#  Solution
+
+Context()->texStrings;
+#BEGIN_SOLUTION
+
+#< = 10, V = 1, $strAns
+#END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

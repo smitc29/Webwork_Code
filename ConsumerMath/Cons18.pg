@@ -1,0 +1,105 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+## DBsubject(WeBWorK)
+## DBchapter(Consumer_Math)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(03/29/2018)
+## Institution(SUNY Oneonta)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('consumer','math')
+
+###########################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "AnswerFormatHelp.pl",
+  "PGcourse.pl",
+  "niceTables.pl",
+  #"contextArbitraryString.pl",
+);
+
+TEXT(beginproblem());
+
+
+###########################
+#  Setup
+
+Context("Complex"); # Used for decimals
+
+$prin = random(5000, 6000, 100); # First val, principal 
+$r = random(2, 6, 0.5); 
+$rate = $r / 100; # Second val, rate of increase
+$years = random(3, 5);
+
+# Annually, once a year compound; n = 1
+$Ans01 = $prin * ((1 + $rate)**($years * 1)); 
+$Ans01 = sprintf("%0.2f", $Ans01); # In cash amount, with principal
+
+# Quarterly, 4x a year compound; n = 4
+$Ans02 = $prin * ((1 + $rate/4)**($years * 4)); 
+$Ans02 = sprintf("%0.2f", $Ans02); # In cash amount, with principal
+
+# Monthly, 4x a year compound; n = 4
+$Ans03 = $prin * ((1 + $rate/12)**($years * 12)); 
+$Ans03 = sprintf("%0.2f", $Ans03); # In cash amount, with principal
+
+# Daily, 365x a year compound; n = 4
+$Ans04 = $prin * ((1 + $rate/365)**($years * 365)); 
+$Ans04 = sprintf("%0.2f", $Ans04); # In cash amount, with principal
+
+
+###########################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+$BR
+ Suppose an investment of $$prin earns $r% interest. Determine the total accumulated amount after $years years if the loan is compounded...
+$BR
+$BR
+ Annually:  $\{ ans_rule(5) \}  
+$BR
+$BR
+ Quarterly:  $\{ ans_rule(5) \}
+$BR
+$BR
+ Monthly:  $\{ ans_rule(5) \}
+$BR
+$BR
+ Daily (365 day year):  $\{ ans_rule(5) \}
+$BR
+
+
+
+END_TEXT
+Context()->normalStrings;
+#\{ AnswerFormatHelp("numbers") \} Use this in texStrings to allows students to see formulas
+
+############################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS( Compute($Ans01)->cmp());
+ANS( Compute($Ans02)->cmp());
+ANS( Compute($Ans03)->cmp());
+ANS( Compute($Ans04)->cmp());
+
+############################
+#  Solution
+
+Context()->texStrings;
+#BEGIN_SOLUTION
+
+#< = 10, V = 1, $strAns
+#END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

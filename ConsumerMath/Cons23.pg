@@ -1,0 +1,97 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+## DBsubject(WeBWorK)
+## DBchapter(Consumer_Math)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(03/29/2018)
+## Institution(SUNY Oneonta)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('mortgage','down payment', 'points')
+
+###########################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "AnswerFormatHelp.pl",
+  "PGcourse.pl",
+  "niceTables.pl",
+  #"contextArbitraryString.pl",
+);
+
+TEXT(beginproblem());
+
+
+###########################
+#  Setup
+
+Context("Numeric"); # Used for decimals
+
+$principal = random(120000, 240000, 5000); # First val, principal
+
+$DpaymentShow = random(10, 25, 5);
+$temp = $DpaymentShow / 100;
+$Dpayment = $temp * $principal;
+
+$points = random(2, 4);
+
+# Calculate actual mortgage size
+$mortgage = $principal - $Dpayment;
+
+$temp = $mortgage / 100;
+$PayPoints = $temp * $points;
+
+
+###########################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+ When purchasing a house, a buyer will typically use a$BBOLD homeowner's mortgage,$EBOLD which is a long  term loan where the property being purchased is collateral. That is, if the buyer defaults on the loan (doesn’t pay it),  then  the  bank  claims  the  property 
+$BR
+$BR
+Two kinds of up-front payment a buyer might make in obtaining a mortgage are a$BBOLD down payment$EBOLD and$BBOLD points.$EBOLD 
+The down payment is a payment directly to the seller of the property of a certain percentage of the cost;  this reduces the total amount that must be financed, reducing the size of the mortgage. Points are a  payment to the bank, not the seller of the property, of a certain percentage of the mortgage interest. Each point is one percent of the mortgage amount. This is prepaid interest.
+$BR
+$BR
+Suppose a buyer is purchasing a $$principal house with a $DpaymentShow% down payment and $points points on their mortgage. 
+$BR
+$BR
+- Find the amount of the down payment: $\{ ans_rule(5) \}
+$BR
+$BR
+- Determine the size of the mortgage: $\{ ans_rule(5) \}
+$BR
+$BR
+- Find the amount the buyer is paying the bank through points: $\{ ans_rule(5) \} 
+$BR
+$BR
+END_TEXT
+Context()->normalStrings;
+#\{ AnswerFormatHelp("numbers") \} Use this in texStrings to allows students to see formulas
+
+############################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+ANS( Compute($Dpayment)->cmp());
+ANS( Compute($mortgage)->cmp());
+ANS( Compute($PayPoints)->cmp());
+
+############################
+#  Solution
+
+Context()->texStrings;
+#BEGIN_SOLUTION
+
+#< = 10, V = 1, $strAns
+#END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

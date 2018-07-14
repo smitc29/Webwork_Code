@@ -1,0 +1,93 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+## DBsubject(WeBWorK)
+## DBchapter(Consumer_Math)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(03/21/2018)
+## Institution(SUNY Oneonta)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('consumer','math')
+
+###########################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "AnswerFormatHelp.pl",
+  "PGcourse.pl",
+  "niceTables.pl",
+  #"contextArbitraryString.pl",
+);
+
+TEXT(beginproblem());
+
+
+###########################
+#  Setup
+
+Context("Complex"); # Used for decimals
+
+$Val01 = random(400, 800, 25); # First val, principal 
+$Val02 = list_random(10, 11, 12); # Second val, annual rate of loan
+$Val03 = $Val02 / 100; # Make rate a percent
+$Ans01 = $Val01 * $Val03 * 0.25; # Only simple interest paid
+$Ans02 = $Val01 - $Ans01; # Original principal minus simple interest
+$Ans03 = $Ans01 / ($Ans02 * 0.25);
+
+$Ans01 = sprintf("%0.2f", $Ans01); # Simple Interest in cash form
+$Ans02 = sprintf("%0.2f", $Ans02);
+$Ans03 = sprintf("%0.3f", $Ans03 * 100); # Round up
+
+###########################
+#  Main text
+
+Context()->texStrings;
+# Original syntax was very confusing, made some changes
+BEGIN_TEXT
+$PAR
+
+Sela Clerk takes out a $$Val01 loan using a discount note with an annual rate of
+$Val02% for a period of 3 months.
+$BR
+$BR
+Determine:
+ $BR
+  $BR
+- The interest she must pay on the day she receives the loan: $ \{ ans_rule(5) \} 
+$BR
+$BR
+- The net amount of money she receives from the bank on the day of the loan: $ \{ ans_rule(5) \}
+$BR
+$BR 
+- The actual interest rate of the loan withdrawn (to the thousandth place): \{ ans_rule(5) \} %
+$BR
+
+END_TEXT
+Context()->normalStrings;
+#\{ AnswerFormatHelp("numbers") \} Use this in texStrings to allows students to see formulas
+
+############################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS( Compute($Ans01)->cmp());
+ANS( Compute($Ans02)->cmp()); # The final profit is based on the original deal for the loan
+ANS( Compute($Ans03)->cmp());
+
+############################
+#  Solution
+
+Context()->texStrings;
+#BEGIN_SOLUTION
+
+#< = 10, V = 1, $strAns
+#END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

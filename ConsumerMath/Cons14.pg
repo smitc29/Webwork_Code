@@ -1,0 +1,85 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+## DBsubject(WeBWorK)
+## DBchapter(Consumer_Math)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(03/22/2018)
+## Institution(SUNY Oneonta)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('consumer','math')
+
+###########################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "AnswerFormatHelp.pl",
+  "PGcourse.pl",
+  "niceTables.pl",
+  #"contextArbitraryString.pl",
+);
+
+TEXT(beginproblem());
+
+
+###########################
+#  Setup
+
+Context("Complex"); # Used for decimals
+
+$prin = random(2000, 3000, 100); # First val, principal 
+$r = random(4.0, 12.0, 0.1); 
+$rate = $r / 100; # Second val, rate of increase
+$t = random(100, 300);
+$time = $t / 360;
+$Ans01 = $prin * $rate * $time;
+$Ans01 = sprintf("%0.2f", $Ans01); # Simple Interest in true percent
+
+
+###########################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+
+ The $BBOLD Banker's Rule $EBOLD says that says that a year is 12 months, and each month is assumed to have 30 days. This means $BR
+that for the purposes of the loan, the year is assumed to have 360 days (instead of 365).
+ $BR
+  $BR
+If a loan is made in the amount of $$prin with a simple interest rate of $r% over a period of $t days, $BR
+determine the interest paid on the loan.
+$BR
+$BR
+ i =  $\{ ans_rule(5) \}  
+$BR
+
+
+
+END_TEXT
+Context()->normalStrings;
+#\{ AnswerFormatHelp("numbers") \} Use this in texStrings to allows students to see formulas
+
+############################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS( Compute($Ans01)->cmp());
+
+############################
+#  Solution
+
+Context()->texStrings;
+#BEGIN_SOLUTION
+
+#< = 10, V = 1, $strAns
+#END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

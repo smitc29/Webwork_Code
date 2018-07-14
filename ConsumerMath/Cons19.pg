@@ -1,0 +1,81 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+## DBsubject(WeBWorK)
+## DBchapter(Consumer_Math)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(03/29/2018)
+## Institution(SUNY Oneonta)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('consumer','math')
+
+###########################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "AnswerFormatHelp.pl",
+  "PGcourse.pl",
+  "niceTables.pl",
+  #"contextArbitraryString.pl",
+);
+
+TEXT(beginproblem());
+
+
+###########################
+#  Setup
+
+Context("Numeric"); # Used for decimals
+
+$result = random(20000.0, 50000.0, 100); # First val, principal 
+$r = random(3, 5, 0.5); 
+$rate = $r / 100; # Second val, rate of increase
+$years = list_random(5, 10, 15);
+
+# Annually, once a year compound; n = 1
+$Ans01 = $result / ((1 + $rate/12)**($years * 12)); 
+$Ans01 = sprintf("%0.2f", $Ans01); # In cash amount, with principal
+
+
+###########################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+$BR
+ Determine the amount that must be invested if the goal is to have $$result after $years years in an account that earns $r% compounded monthly.
+$BR
+$BR
+$\{ ans_rule(5) \}  
+$BR
+
+
+
+END_TEXT
+Context()->normalStrings;
+#\{ AnswerFormatHelp("numbers") \} Use this in texStrings to allows students to see formulas
+
+############################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS( Compute($Ans01)->cmp());
+
+############################
+#  Solution
+
+Context()->texStrings;
+#BEGIN_SOLUTION
+
+#< = 10, V = 1, $strAns
+#END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

@@ -1,0 +1,117 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+## DBsubject(WeBWorK)
+## DBchapter(Consumer_Math)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(03/29/2018)
+## Institution(SUNY Oneonta)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('mortgage','down payment', 'points')
+
+###########################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "AnswerFormatHelp.pl",
+  "PGcourse.pl",
+  "niceTables.pl",
+  #"contextArbitraryString.pl",
+);
+
+TEXT(beginproblem());
+
+
+###########################
+#  Setup
+
+Context("Numeric"); # Used for decimals
+
+$principal = random(120000, 240000, 5000); # First val, principal
+
+$DpaymentShow = random(10, 25, 5);
+$temp = $DpaymentShow / 100;
+$Dpayment = $temp * $principal; # Can change
+
+$YearMortgage = random(15, 30, 5); # How many years is the mortgage
+
+$ShowRate = random(3.0, 5.5, 0.25); # annual percentage rate, r
+$rate = $ShowRate / 100; # First value is displayed, this value is used in calculations
+
+# Calculate actual mortgage size
+$mortgage = $principal - $Dpayment;
+
+$top = $mortgage * ($rate / 12); # This value is the numerator of the 2nd answer
+
+$temp = 1 - ((1 + $rate/12)**(-12 * $YearMortgage)); # This is the denominator of the 2nd answer
+
+$Ans02 = $top / $temp; # Complete interest costs
+$Ans02 += $mortgage; # Complete cost of mortgage
+
+$Ans02 /= ($YearMortgage * 12); # How much do you pay per month (years * 12 months/yr)
+
+$Ans02 = sprintf("%0.2f", $Ans02); # Round out the cash amount
+
+
+Context()->variables->add(n => "Real");
+Context()->variables->add(p => "Real");
+Context()->variables->add(r => "Real");
+Context()->variables->add(t => "Real");
+$formula = Formula("(p*(r/n) / (1 - (1 + r/n) **(-n*t))) + p"); # Formula for display purposes ONLY
+
+###########################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+When determining the cost of a mortgage, you can use either a table (which typically gives the total  monthly payment per $1,000 financed) or the Principal and Interest Payment Formula. This is the same  formula used for determining payments in installment buying, since a mortgage is really an installment  plan.
+$BR
+$BR
+Principal  and  Interest  Payment  Formula:
+$BR
+$BCENTER 
+\( \displaystyle m = $formula \) 
+$ECENTER
+$BR
+$BR
+where$BITALIC m$EITALIC is the total payment including both the principal investment and interest,$BITALIC p$EITALIC is the size of the mortgage,$BITALIC r$EITALIC is  the  annual  interest rate  as  a  decimal  number, $BITALIC n$EITALIC is the number of payments per year (12 if payments are monthly), and $BITALIC t$EITALIC is the 
+time in years.
+$BR
+$BR
+Suppose a buyer is purchasing a $$principal house with a $DpaymentShow% down payment. They have a  $YearMortgage year mortgage at $ShowRate%  annual  interest  rate.
+$BR
+$BR
+- Determine the size of the mortgage: $\{ ans_rule(5) \}
+$BR
+$BR
+- Determine the monthly payment on the mortgage: $\{ ans_rule(5) \} 
+$BR
+$BR
+END_TEXT
+Context()->normalStrings;
+#\{ AnswerFormatHelp("numbers") \} Use this in texStrings to allows students to see formulas
+
+############################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+ANS( Compute($mortgage)->cmp());
+ANS( Compute($Ans02)->cmp());
+
+############################
+#  Solution
+
+Context()->texStrings;
+#BEGIN_SOLUTION
+
+#< = 10, V = 1, $strAns
+#END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

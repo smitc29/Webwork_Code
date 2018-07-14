@@ -1,0 +1,110 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+## DBsubject(WeBWorK)
+## DBchapter(Consumer_Math)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(03/29/2018)
+## Institution(SUNY Oneonta)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('monthly payments','installment loan')
+
+###########################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "AnswerFormatHelp.pl",
+  "PGcourse.pl",
+  "niceTables.pl",
+  #"contextArbitraryString.pl",
+);
+
+TEXT(beginproblem());
+
+
+###########################
+#  Setup
+
+Context("Numeric"); # Used for decimals
+
+$cost = random(2000, 5000, 500); # Total cost of product 
+
+$showDPayment = random(10, 25, 5); # Percent of total used in initial payment
+$DPayment = $cost * ($showDPayment / 100);# Initial down payment in cash value
+
+$principal = $cost - $DPayment; # First val used in calculations, principal
+
+$ShowAPR = random(4, 8, 0.5); # annual percentage rate, r
+$rate = $ShowAPR / 100; # First value is displayed, this value is used in calculations
+
+$payments = list_random(6,12,18,24,30,36,48,60); # Number of monthly playments, t
+$time = $payments / 12; # Number of years to pay off loan
+
+# Annually, once a year compound; n = 12
+$temp = $rate / 12;
+$Ans01 = (1 + $temp)**(-12*$time);
+$Ans01 = 1 - $Ans01;
+$temp = $principal * ($rate/12);
+$Ans01 = $temp / $Ans01; # This is the installment payment value, m
+$fc = ($Ans01 * 12 * $time) - $principal;# Finance Charge value
+$fc = sprintf("%0.2f", $fc); # In cash amount
+
+$Ans02 = $fc + $principal;
+$Ans02 /= $payments; # Total cost divided by number of payments to get amount per payment
+$Ans02 = sprintf("%0.2f", $Ans02); # In cash amount
+
+$DPayment = sprintf("%0.2f", $DPayment); # Only for student answer rounding
+$principal = sprintf("%0.2f", $principal); 
+
+###########################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+$BR
+A used car is purchased for $$cost. A down payment of $showDPayment% of the cost is made, and the rest is financed with $ShowAPR% APR for $payments monthly payments...
+$BR
+$BR
+- Determine the amount of the down payment: $\{ ans_rule(5) \} 
+$BR
+$BR
+- Determine the amount financed: $\{ ans_rule(5) \}  
+$BR
+$BR
+- Determine the finance charge: $\{ ans_rule(5) \}  
+$BR
+$BR
+- Determine the monthly payment: $\{ ans_rule(5) \} 
+$BR
+$BR
+END_TEXT
+Context()->normalStrings;
+#\{ AnswerFormatHelp("numbers") \} Use this in texStrings to allows students to see formulas
+
+############################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS( Compute($DPayment)->cmp());
+ANS( Compute($principal)->cmp());
+ANS( Compute($fc)->cmp());
+ANS( Compute($Ans02)->cmp());
+
+############################
+#  Solution
+
+Context()->texStrings;
+#BEGIN_SOLUTION
+
+#< = 10, V = 1, $strAns
+#END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

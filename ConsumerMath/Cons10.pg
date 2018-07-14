@@ -1,0 +1,91 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+## DBsubject(WeBWorK)
+## DBchapter(Consumer_Math)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(03/21/2018)
+## Institution(SUNY Oneonta)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('consumer','math')
+
+###########################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "AnswerFormatHelp.pl",
+  "PGcourse.pl",
+  "niceTables.pl",
+  #"contextArbitraryString.pl",
+);
+
+TEXT(beginproblem());
+
+
+###########################
+#  Setup
+
+Context("Complex"); # Used for decimals
+
+$Val01 = list_random(1200, 1300, 1400, 1500, 1600); # First val, principal 
+$timeA = list_random(12, 18, 24, 30, 36); # Second val, time/num of months
+$time = $timeA / 12; # There's 12 months in a year, 18mths = 1.5 years
+$Val03 = random(4, 5.99, 0.01); # Third val, rate of interest in percent form
+$Val04 = $Val03 / 100; # 4th val, rate of interest in decimal form
+$Ans01 = $Val01 * $time * $Val04; # Simple Interest, i = ptr
+$Ans02 = $Ans01 + $Val01; # Simple Interest + Initial Cost (p + i)
+$Ans01 = sprintf("%0.2f", $Ans01); # Simple Interest
+$Ans02 = sprintf("%0.2f", $Ans02); # Simple Interest + Initial Cost
+
+###########################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+
+ $BBOLD Simple Interest $EBOLD on an amount (such as a loan), called the $BBOLD principal $EBOLD \(p\),  is the same as percent change, is calculated by multiplying the
+$BR
+principal by the $BBOLD rate $EBOLD \(r\) and also by the $BBOLD time $EBOLD \(t\) (such as the length of the loan). The formula is then \( i = prt \). 
+ $BR
+  $BR
+Suppose a person borrows $$Val01 to purchase a refrigerator using a $timeA month loan with an annual interest rate of $Val03%.
+ $BR
+ No payment is made until the loan $BBOLD matures$EBOLD, ie. until the end of loan period, at which point the principal and interest must be paid. 
+$BR
+$BR
+ How much total interest is the person charged on the loan? $\{ ans_rule(5) \} 
+$BR
+$BR 
+ What is the total amount that needs to be paid off when this loan matures? $\{ ans_rule(5) \} 
+ $BR
+
+
+END_TEXT
+Context()->normalStrings;
+#\{ AnswerFormatHelp("numbers") \} Use this in texStrings to allows students to see formulas
+
+############################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS( Compute($Ans01)->cmp());
+ANS( Compute($Ans02)->cmp());
+
+############################
+#  Solution
+
+Context()->texStrings;
+#BEGIN_SOLUTION
+
+#< = 10, V = 1, $strAns
+#END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

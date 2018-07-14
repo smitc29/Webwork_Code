@@ -1,0 +1,113 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+## DBsubject(WeBWorK)
+## DBchapter(Consumer_Math)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(03/22/2018)
+## Institution(SUNY Oneonta)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('consumer','math')
+
+###########################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "AnswerFormatHelp.pl",
+  "PGcourse.pl",
+  "niceTables.pl",
+  #"contextArbitraryString.pl",
+);
+
+TEXT(beginproblem());
+
+
+###########################
+#  Setup
+
+Context("Complex"); # Used for decimals
+
+$prin = random(2000, 8000, 100); # First val, principal 
+$r = 20; 
+$rate = $r / 100; # Second val, rate of increase
+
+$Ans01 = $prin * $rate * 0.25; # First quarter payment
+$Ans01 = sprintf("%0.2f", ($Ans01 + $prin)); # In cash amount, with principal
+
+$Ans02 = $Ans01 * $rate * 0.25; # 2nd quarter payment
+$Ans02 = sprintf("%0.2f", ($Ans02 + $Ans01)); # In cash amount, with principal
+
+$Ans03 = $Ans02 * $rate * 0.25; # 3rd quarter payment
+$Ans03 = sprintf("%0.2f", ($Ans03 + $Ans02)); # In cash amount, with principal
+
+$Ans04 = $Ans03 * $rate * 0.25; # 4th quarter payment
+$Ans04 = sprintf("%0.2f", ($Ans04 + $Ans03)); # In cash amount, with principal
+
+$Ans05 = $prin * $rate * 1; # Simple payment
+$Ans05 = sprintf("%0.2f", ($Ans05 + $prin)); # In cash amount, with principal
+
+
+###########################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+
+With $BBOLD compound interest $EBOLD the interest is calculated prior to maturity, $BR
+and that interest is added to the value of the principal. Interest is generally compounded at regular intervals, $BR
+such as annually, semiannually, quar-terly, monthly or daily. It can even be compounded continuously.
+ $BR
+  $BR
+Suppose a loan of $$prin has $r% interst compounded quarterly and matures after one year. 
+$BR
+Determine the total amount accumulated on the loan for each of the following periods.
+$BR
+$BR
+ First Quarter:  $\{ ans_rule(5) \}  
+$BR
+$BR
+ Second Quarter:  $\{ ans_rule(5) \}
+$BR
+$BR
+ Third Quarter:  $\{ ans_rule(5) \}
+$BR
+$BR
+ One Year:  $\{ ans_rule(5) \}
+$BR
+$BR
+ If the loan had been a simple interest loan, what would be the total amount to be repaid? $\{ ans_rule(5) \}
+$BR
+
+
+END_TEXT
+Context()->normalStrings;
+#\{ AnswerFormatHelp("numbers") \} Use this in texStrings to allows students to see formulas
+
+############################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS( Compute($Ans01)->cmp());
+ANS( Compute($Ans02)->cmp());
+ANS( Compute($Ans03)->cmp());
+ANS( Compute($Ans04)->cmp());
+ANS( Compute($Ans05)->cmp());
+
+############################
+#  Solution
+
+Context()->texStrings;
+#BEGIN_SOLUTION
+
+#< = 10, V = 1, $strAns
+#END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

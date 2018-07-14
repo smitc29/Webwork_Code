@@ -1,0 +1,128 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+## DBsubject(WeBWorK)
+## DBchapter(Consumer_Math)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(03/29/2018)
+## Institution(SUNY Oneonta)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('monthly payments','installment loan')
+
+###########################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "AnswerFormatHelp.pl",
+  "PGcourse.pl",
+  "niceTables.pl",
+  #"contextArbitraryString.pl",
+);
+
+TEXT(beginproblem());
+
+
+###########################
+#  Setup
+
+Context("Numeric"); # Used for decimals
+
+$APRtable = image("APR_Table.png",width=>673,height=>221,tex_size=>40, extra_html_tags=>'alt="APR table."');
+
+$principal = random(1000, 2000, 100); # First val, principal
+
+$ShowAPR = random(4, 8, 0.5); # annual percentage rate, r
+$rate = $ShowAPR / 100; # First value is displayed, this value is used in calculations
+
+$payments = list_random(6,12,18,24,30,36,48,60); # Number of monthly playments, t
+$time = $payments / 12; # Number of years to pay off loan
+
+# Annually, once a year compound; n = 12
+$temp = $rate / 12;
+$Ans01 = (1 + $temp)**(-12*$time);
+$Ans01 = 1 - $Ans01;
+$temp = $principal * ($rate/12);
+$Ans01 = $temp / $Ans01; # This is the installment payment value, m
+$fc = ($Ans01 * 12 * $time) - $principal;# Finance Charge value
+$fc = sprintf("%0.2f", $fc); # In cash amount
+
+$Ans02 = $fc + $principal;
+$Ans02 /= $payments; # Total cost divided by number of payments to get amount per payment
+$Ans02 = sprintf("%0.2f", $Ans02); # In cash amount
+
+Context()->variables->add(n => "Real");
+Context()->variables->add(p => "Real");
+Context()->variables->add(r => "Real");
+Context()->variables->add(t => "Real");
+$formula = Formula("p*(r/n) / (1 - (1 + r/n) **(-n*t))"); # Formula for display purposes ONLY
+
+###########################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+$BR
+ An $BBOLD Installment  Loan $EBOLD is  one  whose  payments  are  made  periodically  over  the  life  of the  loan, rather  than  in  one  lump  sum. $BBOLD Fixed  Installment  Loans $EBOLD have a set number of  payments at a fixed value. This is typical when financing a large purchase.
+$BR $BBOLD Open-end  Installment  Loans$EBOLD,  such  as  credit  cards, have  variable  payments. 
+$BR
+$BR You  may  use  the following  APR  Table  for  Monthly  payment  plans  or  the $BBOLD installment  payment  formula$EBOLD:
+$BR
+$BCENTER 
+\( \displaystyle m = $formula \) 
+$BR
+$BR
+$APRtable
+$ECENTER
+$BR
+$BR
+to  determine  the  amount  of  the  installment  payment.  In  the  formula, \(m\) is  the  installment  payment, \(p\) is  the principal financed, \(r\) is  the  annual  percentage  rate  as  a  decimal  number,
+\(n\) is  the  number  of  payments  per  year, and \(t\) is  the  number  of  years.
+$BR  
+$BR For  monthly  payments, \(n = 12.\)  The  formula  is  more  general  than  the  table, because  the  table  only  handles  monthly  payments,  while  the  payment  period  can  be  changed  in  the  formula  by changing  the  value  of \(n\).
+$BR
+$BR
+Recall that the $BBOLD finance charge $EBOLD is  the total cost for borrowing money; this includes interest on the loan and any  additional fee. Notice  that  the  finance  charge  table  gives the interest  portion  of  the finance  charge, not the  monthy  payments, while  the installment payment formula  gives  the  payment  per installment  (which may or may not be monthly) and  not  the  finance  charge. 
+$BR
+$BR
+ If  one  uses  a  table  to  find  the  finance  charge \(f\),  adding \(f\) to \(p\) and dividing  by  the  total  number  of  payments  gives  the  installment  payment \(m\).  If  one  uses  the  intallment payment  formula, multiplying \(m\), \(n\) and \(t\) together, and subtracting \(p\) gives the finance charge \(f\).
+$BR
+$BR
+If $$principal is borrowed to purchase a new couch, and the financing available has no 
+down  payment with $ShowAPR% APR for $payments monthly payments...
+$BR
+$BR
+- Determine the finance charge: $\{ ans_rule(5) \}  
+$BR
+$BR
+- Determine the monthly payment: $\{ ans_rule(5) \} 
+$BR
+$BR
+END_TEXT
+Context()->normalStrings;
+#\{ AnswerFormatHelp("numbers") \} Use this in texStrings to allows students to see formulas
+
+############################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS( Compute($fc)->cmp());
+ANS( Compute($Ans02)->cmp());
+
+############################
+#  Solution
+
+Context()->texStrings;
+#BEGIN_SOLUTION
+
+#< = 10, V = 1, $strAns
+#END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

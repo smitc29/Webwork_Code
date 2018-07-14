@@ -1,0 +1,89 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+## DBsubject(WeBWorK)
+## DBchapter(Consumer_Math)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(03/21/2018)
+## Institution(SUNY Oneonta)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('consumer','math')
+
+###########################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "AnswerFormatHelp.pl",
+  "PGcourse.pl",
+  "niceTables.pl",
+  #"contextArbitraryString.pl",
+);
+
+TEXT(beginproblem());
+
+
+###########################
+#  Setup
+
+Context("Complex"); # Used for decimals
+
+$Val01 = random(96, 98.5, 0.25); # First val, principal 
+$Val02 = 100; # Second val, final result of loan
+$Ans01 = $Val02 - $Val01; # Subtract price so only simple interest remains
+$Ans01 = $Val02 / $Val01; # i/p = rp/p, since t = 1, all thats left is rate of increase
+$Ans01 -= 1; # Result will be over 100% 
+$Ans01 = sprintf("%0.3f", $Ans01 * 100); # Simple Interest in true percent
+
+
+###########################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+
+ A $BBOLD discount note $EBOLD is a special kind of loan where the borrower pays the interest on the loan at the time they $BR
+receive the loan. In effect, the borrower receives less money because they are also paying some amount at the $BR
+time they receive the loan. At the end of the loan, they only pay back the principal, because they have already $BR
+paid the interest.
+ $BR
+  $BR
+Treasury Bills are one example of discount notes: they have a given value, say $100, but instead of yielding $BR
+interest, sell at a discounted price. When buying a treasury bill, you are effectively making a short term loan $BR
+to the government.
+$BR
+$BR
+ If you wish to purchase a treasury bill that sells for $$Val01 and has a value $BR
+of $100, which can be redeemed in one year, what is the annual rate of return for this loan? (In other words, $BR
+what interest rate are you effectively earning?) (Round to 3 places) \{ ans_rule(5) \}% 
+$BR
+$BR 
+
+
+END_TEXT
+Context()->normalStrings;
+#\{ AnswerFormatHelp("numbers") \} Use this in texStrings to allows students to see formulas
+
+############################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS( Compute($Ans01)->cmp());
+
+############################
+#  Solution
+
+Context()->texStrings;
+#BEGIN_SOLUTION
+
+#< = 10, V = 1, $strAns
+#END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

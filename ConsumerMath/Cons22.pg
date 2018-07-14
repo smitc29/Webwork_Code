@@ -1,0 +1,187 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+## DBsubject(WeBWorK)
+## DBchapter(Consumer_Math)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(03/29/2018)
+## Institution(SUNY Oneonta)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('unearned interest')
+
+###########################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "AnswerFormatHelp.pl",
+  "PGcourse.pl",
+  "niceTables.pl",
+  #"contextArbitraryString.pl",
+);
+
+TEXT(beginproblem());
+
+
+###########################
+#  Setup
+
+Context("Numeric"); # Used for decimals
+
+$APRtable = image("APR_Table.png",width=>673,height=>221,tex_size=>40, extra_html_tags=>'alt="APR table."');
+@APRvalRow06 = (1.17, 1.32, 1.46, 1.61, 1.76, 1.9, 2.05, 2.2, 2.35, 2.49, 2.64, 2.79, 2.93);
+@APRvalRow12 = (2.18, 2.45, 2.73, 3.0, 3.28, 3.56, 3.83, 4.11, 4.39, 4.66, 4.94, 5.22, 5.5);
+@APRvalRow18 = (3.2, 3.6, 4.0, 4.41, 4.82, 5.22, 5.63, 6.04, 6.45, 6.86, 7.28, 7.69, 8.1);
+@APRvalRow24 = (4.22, 4.75, 5.29, 5.83, 6.37, 6.91, 7.45, 8.0, 8.54, 9.09, 9.64, 10.19, 10.75);
+@APRvalRow30 = (5.25, 5.92, 6.59, 7.26, 7.94, 8.61, 9.3, 9.98, 10.66, 11.35, 12.04, 12.74, 13.43);
+#@APRvalRow36 = (6.29, 7.09, 7.9, 8.71, 9.52, 10.34, 11.16, 11.98, 12.81, 13.64, 14.48, 15.32, 16.16);
+#@APRvalRow48 = (8.38, 9.46, 10.54, 11.63, 12.73, 13.83, 14.94, 16.06, 17.18, 18.31, 19.45, 20.59, 21.74);
+#@APRvalRow60 = (10.5, 11.86, 13.23, 14.61, 16.0, 17.4, 18.81, 20.23, 21.66, 23.1, 24.55, 26.01, 27.4);
+
+$principal = random(8000, 20000, 200); # First val, principal
+
+$temp = random(8.0, 20.0);
+$ShowAPR = $temp/2; # annual percentage rate, r
+$rate = $ShowAPR / 100; # First value is displayed, this value is used in calculations
+
+$payments = list_random(12, 24, 36, 48, 60); # Number of monthly playments, t
+$time = $payments / 12; # Number of years to pay off loan
+
+$c = $payments/2; # latter half of the number of payments
+
+$temp -= 8; # Use temp to find which scalar value in an array is needed
+
+$V = 1; #Used in calculating unearned interest (following if statements)
+
+if($c == 6)
+	{$V = $APRvalRow06[$temp];}
+if($c == 12)
+	{$V = $APRvalRow12[$temp];}
+if($c == 18)
+	{$V = $APRvalRow18[$temp];}
+if($c == 24)
+	{$V = $APRvalRow24[$temp];}
+if($c == 30)
+	{$V = $APRvalRow30[$temp];}
+
+# Annually, once a year compound; n = 12
+$temp = $rate / 12;
+$Ans01 = (1 + $temp)**(-12*$time);
+$Ans01 = 1 - $Ans01;
+$temp = $principal * ($rate/12);
+$Ans01 = $temp / $Ans01; # This is the installment payment value, m
+$fc = ($Ans01 * 12 * $time) - $principal;# Finance Charge value
+$fc = sprintf("%0.2f", $fc); # In cash amount
+
+$Ans02 = $fc + $principal;
+$Ans03 = $Ans02 / 2; # Half of the ENTIRE cost 
+$Ans02 /= $payments; # Total cost divided by number of payments to get amount per payment/monthly payment
+
+$Unearned = $c * $Ans02 * $V;# Unearned interest value
+$temp = 100 + $V;
+$Unearned = $Unearned / $temp; # Unearned interest
+
+$Ans05 = $Ans02 + $Ans03; # Second half of payment without unearned interest, plus Bth payment (+1 monthly payment)
+$Ans05 -= $Unearned;
+
+$Ans02 = sprintf("%0.2f", $Ans02); # In cash amount
+$Ans03 = sprintf("%0.2f", $Ans03);
+$Unearned = sprintf("%0.2f", $Unearned);
+$Ans05 = sprintf("%0.2f", $Ans05);
+
+
+Context()->variables->add(n => "Real");
+Context()->variables->add(P => "Real");
+Context()->variables->add(V => "Real");
+
+$formula = Formula("(n*P*V) / (100 + V)"); # Formula for display purposes ONLY
+
+Context()->variables->add(b => "Real");
+Context()->variables->add(t => "Real");
+Context()->variables->add(h => "Real");
+$bpower = Formula("b**(th)");
+
+###########################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+$BCENTER
+The following table must be used to resolve this problem:
+$BR
+$BR
+$APRtable
+$ECENTER
+$BR
+$BR
+ The $BBOLD actuarial method $EBOLD for unearned interest determines how much money a person can save by paying off a fixed monthly installment loan early. The $BBOLD unearned interest $EBOLD is the amount of money saved by the borrower - the amount of interest they do not have to pay because the loan was paid off early. 
+$BR
+$BR Actuarial Method for Unearned Interest:
+$BR
+$BCENTER 
+\( \displaystyle u = $formula \) 
+$ECENTER
+$BR
+$BR
+where \(u\) is  the unearned interest, \(n\) is the number of $BITALIC remaining $EITALIC monthly
+ payments$BITALIC (not $EITALIC including the current payment), \(.P\) is the monthly payment, and \(V\) is the value from the APR table corresponding to the APR and the number of remaining payments, excluding the current payment. 
+$BR  
+$BR 
+Suppose Jonathan is purchasing a car at a cost of $$principal. The purchase is financed at an APR of  $ShowAPR%, over $payments monthly payments...
+$BR
+$BR
+$BR
+$BBOLD Part 1:$EBOLD Suppose every payment is made on the normal schedule.
+$BR
+$BR
+- Determine the finance charge: $\{ ans_rule(5) \}  
+$BR
+$BR
+- Determine the monthly payment: $\{ ans_rule(5) \} 
+$BR
+$BR
+$BR
+$BBOLD Part 2:$EBOLD Suppose at the $c\(th\) payment, Jonathan decides to pay off the balance.
+$BR
+$BR
+- Given that there are $c payments remaining, how much more would Jonathan be paying in total over the course of those remaining payments? (Excluding the current payment) $\{ ans_rule(5) \}
+$BR
+$BR
+- Determine the unearned interest at the $c\(th\) payment: $\{ ans_rule(5) \}
+$BR
+$BR
+- Jonathan must make his $c\(th\) payment as normal, and additionally, pay off the total for the remaining payments minus the unearned interest. Inluding the $c\(th\) payment, how much does Jonathan need to pay off the balance? $\{ ans_rule(5) \} 
+$BR
+$BR
+END_TEXT
+Context()->normalStrings;
+#\{ AnswerFormatHelp("numbers") \} Use this in texStrings to allows students to see formulas
+
+############################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS( Compute($fc)->cmp());
+ANS( Compute($Ans02)->cmp());
+
+ANS( Compute($Ans03)->cmp());
+ANS( Compute($Unearned)->cmp());
+ANS( Compute($Ans05)->cmp());
+
+############################
+#  Solution
+
+Context()->texStrings;
+#BEGIN_SOLUTION
+
+#< = 10, V = 1, $strAns
+#END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

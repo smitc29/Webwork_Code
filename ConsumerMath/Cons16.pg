@@ -1,0 +1,134 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+## DBsubject(WeBWorK)
+## DBchapter(Consumer_Math)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(03/29/2018)
+## Institution(SUNY Oneonta)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('consumer','math')
+
+###########################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "PGML.pl",
+  "MathObjects.pl",
+  "parserMultiAnswer.pl",
+  "scaffold.pl",
+  "PGcourse.pl",
+  "contextArbitraryString.pl",
+  "contextArbitraryString.pl",
+  "parserMultiAnswer.pl",
+  "parserPopUp.pl",
+);
+TEXT(beginproblem());
+
+
+###########################
+#  Setup
+
+Context("Numeric");
+$prin = random(700, 1200, 50); # First val, principal
+$prindisplay = $prin / 2; # Used solely for displaying information
+$October = random(16,24);
+$January = random(5,12);
+$time01 = (31 - $October) + (30) + (31) + $January;  
+# Actual number of days elapsed for early payment; October, November, December, January
+$time02 = $time01 / 360; # Decimal answer for calculations
+
+# Rate was never mentioned
+$r = random(4, 8, 0.5); 
+$rate = $r / 100; # Third val, rate of increase
+$partial = $prin/2; # Partial payment made once
+
+$Interest01 = $prin * $time02 * $rate; # Used in answer part 2
+$Interest01 = sprintf("%0.2f", $Interest01);
+$partial01 = $partial - $Interest01; # Subtract interest from partial payment
+$partial01 = sprintf("%0.2f", $partial01);
+$prin01 = $prin - $partial01; # Remaining principal to be paid off
+$prin01 = sprintf("%0.2f", $prin01);
+
+
+$Interest02 = $prin01 * ((120-$time01)/360) * $rate; # Used in answer part 3
+$Interest02 = sprintf("%0.2f", $Interest02);
+$final = $Interest02 + $prin01; # Final payment, remaining interest and principal
+$final = sprintf("%0.2f", $final); # Dollar amount
+
+
+Context("ArbitraryString");
+    $strAns = ('February ');  # Creates a string for storing first string answer in
+    $strAns = join '', $strAns, ($October - 3);
+
+
+
+
+BEGIN_PGML
+[@ $PAR @]*
+(Use a table or an online calculator to find the number of days between two dates.)
+[@ $PAR @]*
+Suppose you want to purchase a computer, which costs $[$prin]. To pay for it,  
+you take out a 120 day simple interest loan on October [$October] at an annual rate of [$r]%. 
+A single partial payment of $[$prindisplay] is made on January [$January].
+[@ $PAR @]* 
+END_PGML
+
+
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Part 1: Interest built up to first payment");
+
+BEGIN_PGML
+[@ $PAR @]*
+What is the date of maturity for the loan? (Month and day, capitalize month) [______________]{$strAns}
+[@ $PAR @]*
+How many days are there from the first day of the loan to the partial payment? [____]{$time01}
+[@ $PAR @]*
+How many days are there from the partial payment to the date of maturity of the loan? [____]{120 - $time01}
+END_PGML
+
+Section::End();
+
+###########################################
+Section::Begin("Part 2: Partial Payment");
+
+
+BEGIN_PGML
+[@ $PAR @]*
+Remember that answers are in terms of cash, not just a decimal.
+[@ $PAR @]*
+Find the amount of interest accrued at the first partial payment. $ [____]{$Interest01}
+[@ $PAR @]*
+Find the amount of the payment that is applied to the original principal of the loan. $ [____]{$partial01}
+[@ $PAR @]*
+Find the new principal after the partial payment. $ [____]{$prin01}
+END_PGML
+
+
+Section::End();
+
+###########################################
+Section::Begin("Part 3: Final Payment");
+
+BEGIN_PGML
+[@ $PAR @]*
+Find the new interest accrued at maturity. $ [____]{$Interest02}
+[@ $PAR @]*
+Find the final balance due on the date of maturity. $ [____]{$final}
+END_PGML
+
+
+
+Section::End();
+
+Scaffold::End();
+ENDDOCUMENT();
