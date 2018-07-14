@@ -1,0 +1,192 @@
+## KEYWORDS('voting','preference tables')
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "PGML.pl",
+  "MathObjects.pl",
+  "parserMultiAnswer.pl",
+  "scaffold.pl",
+  "PGcourse.pl",
+  "PGbasicmacros.pl",
+  "PGchoicemacros.pl",
+  "PGanswermacros.pl",
+  "PGgraphmacros.pl",
+  "extraAnswerEvaluators.pl",
+  "PGauxiliaryFunctions.pl",
+  "parserPopUp.pl",
+  "niceTables.pl",
+  #"pccTables.pl",
+  "source.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Interval");
+
+$ans1 = Compute(1);
+$Items = random(13, 17);
+$H01 = random(200, 500);
+$H02 = random(800, 1300);
+$H03 = random(400, 800);
+$H04 = random(200, 1000);
+
+$StanDiv = $H01 + $H02 + $H03 + $H04;
+$StanDiv = sprintf("%0.3f", $StanDiv / $Items); # Standard Divisor
+
+@Ratios = (1);
+pop @Ratios;
+@Boost = (1);
+pop @Boost;
+
+$SQuo01 = sprintf("%0.3f", $H01 / $StanDiv ); # Standard Quota
+$LQuo01 = floor($SQuo01); # Lower Quota
+$Rem01 = $H01 / $StanDiv;
+while ($Rem01 >= 1) # Decimal after standard divisor
+{
+    $Rem01 -= 1; # Get remainder out of decimal to see if decimal point is the largest
+}
+push @Ratios, $Rem01; # Add extra decimal value to array
+
+$SQuo02 = sprintf("%0.3f", $H02 / $StanDiv ); # Standard Quota
+$LQuo02 = floor($SQuo02); # Lower Quota
+$Rem02 = $H02 / $StanDiv;
+while ($Rem02 >= 1) # Decimal after standard divisor
+{
+    $Rem02 -= 1; # Get remainder out of decimal to see if decimal point is the largest
+}
+push @Ratios, $Rem02; # Add extra decimal value to array
+
+$SQuo03 = sprintf("%0.3f", $H03 / $StanDiv );
+$LQuo03 = floor($SQuo03); # Lower Quota
+$Rem03 = $H03 / $StanDiv;
+while ($Rem03 >= 1) # Decimal after standard divisor
+{
+    $Rem03 -= 1; # Get remainder out of decimal to see if decimal point is the largest
+}
+push @Ratios, $Rem03; # Add extra decimal value to array
+
+$SQuo04 = sprintf("%0.3f", $H04 / $StanDiv );
+$LQuo04 = floor($SQuo04); # Lower Quota
+$Rem04 = $H04 / $StanDiv;
+while ($Rem04 >= 1) # Decimal after standard divisor
+{
+    $Rem04 -= 1; # Get remainder out of decimal to see if decimal point is the largest
+}
+push @Ratios, $Rem04; # Add extra decimal value to array
+
+$Leftovers = $SQuo01 + $SQuo02 + $SQuo03 + $SQuo04;
+$Leftovers = round($Leftovers); # Round to nearest int to ensure correct calculations
+$Leftovers -= $LQuo01;  # Subtract each lower quota from standard quota total
+$Leftovers -= $LQuo02;
+$Leftovers -= $LQuo03;
+$Leftovers -= $LQuo04;
+$Left = $Leftovers;
+
+@Ratios = num_sort(@Ratios); # Sorts the decimal remainders by size, smallest to largest
+$BEEP = 0;
+
+for($i = @Ratios; $i >= 0; $i--)
+{
+    push @Boost, $Ratios[$i]; # Organize a list going largest to smallest
+}
+
+for($i = @Ratios; $i >= 0; $i--)
+{
+    if($Ratios[$i] == $Rem01 && $Leftovers > 0) # Current variable is large and Leftovers need to assigned
+    {
+        $Leftovers -= 1;
+        $Rem01 = 1;
+    }elsif($Ratios[$i] == $Rem01) # There are no leftovers left to be associated
+    {
+        $Rem01 = 0;
+    }
+    
+    if($Ratios[$i] == $Rem02 && $Leftovers > 0) # Current variable is large and Leftovers need to assigned
+    {
+        $Leftovers -= 1;
+        $Rem02 = 1;
+    }elsif($Ratios[$i] == $Rem02) # There are no leftovers left to be associated
+    {
+        $Rem02 = 0;
+    }
+    
+    if($Ratios[$i] == $Rem03 && $Leftovers > 0) # Current variable is large and Leftovers need to assigned
+    {
+        $Leftovers -= 1;
+        $Rem03 = 1;
+    }elsif($Ratios[$i] == $Rem03) # There are no leftovers left to be associated
+    {
+        $Rem03 = 0;
+    }
+    
+    if($Ratios[$i] == $Rem04 && $Leftovers > 0) # Current variable is large and Leftovers need to assigned
+    {
+        $Leftovers -= 1;
+        $Rem04 = 1;
+    }elsif($Ratios[$i] == $Rem04) # There are no leftovers left to be associated
+    {
+        $Rem04 = 0;
+    }
+    
+    
+}
+    
+
+
+BEGIN_TEXT
+
+$PAR
+Suppose $Items copier machines are to be distributed to 4 high schools, which we label H1, H2, H3, and
+H4. The populations of the high schools are:
+$BR
+
+$BCENTER
+\{ begintable(5) \}
+\{ row( "$SPACE High School $SPACE", "$SPACE H1 $SPACE", "$SPACE H2 $SPACE", "$SPACE H3 $SPACE","$SPACE H4 $SPACE" ) \}
+\{ row( "$SPACE Population $SPACE", "$SPACE $H01 $SPACE", "$SPACE $H02 $SPACE", "$SPACE $H03 $SPACE", "$SPACE $H04 $SPACE" ) \}
+\{ endtable() \}
+$BR
+Determine the Standard Divisor for this apportionment (round to three decimal places): \{ ans_rule(10) \} 
+
+$BR $BR
+Find the lower quota for each of the high schools (round to three decimal places).
+$BR $BR
+
+H1: \{ ans_rule(10) \} $BR $BR
+H2: \{ ans_rule(10) \} $BR $BR
+H3: \{ ans_rule(10) \} $BR $BR
+H4: \{ ans_rule(10) \} $BR $BR
+
+$BR
+Use Hamilton’s Method to determine the apportionment of copiers for each high school: 
+$BR $BR
+
+H1: \{ ans_rule(10) \} $BR $BR
+H2: \{ ans_rule(10) \} $BR $BR
+H3: \{ ans_rule(10) \} $BR $BR
+H4: \{ ans_rule(10) \} $BR $BR
+$ECENTER
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute($StanDiv)->cmp()); # Standard divisor
+
+ANS(Compute($LQuo01)->cmp()); # Lower Quota, H1
+ANS(Compute($LQuo02)->cmp()); # Lower Quota, H2
+ANS(Compute($LQuo03)->cmp()); # Lower Quota, H3
+ANS(Compute($LQuo04)->cmp()); # Lower Quota, H4
+
+ANS(Compute($LQuo01 + $Rem01)->cmp()); # Lower Quota + Remainder, H1
+ANS(Compute($LQuo02 + $Rem02)->cmp()); # Lower Quota + Remainder, H2
+ANS(Compute($LQuo03 + $Rem03)->cmp()); # Lower Quota + Remainder, H3
+ANS(Compute($LQuo04 + $Rem04)->cmp()); # Lower Quota + Remainder, H4
+
+
+#ANS($StanDiv->cmp);
+
+
+ENDDOCUMENT();

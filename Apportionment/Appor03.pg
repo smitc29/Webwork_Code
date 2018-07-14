@@ -1,0 +1,180 @@
+## KEYWORDS('voting','preference tables')
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "PGML.pl",
+  "MathObjects.pl",
+  "parserMultiAnswer.pl",
+  "scaffold.pl",
+  "PGcourse.pl",
+  "PGbasicmacros.pl",
+  "PGchoicemacros.pl",
+  "PGanswermacros.pl",
+  "PGgraphmacros.pl",
+  "extraAnswerEvaluators.pl",
+  "PGauxiliaryFunctions.pl",
+  "parserPopUp.pl",
+  "niceTables.pl",
+  #"pccTables.pl",
+  "source.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Interval");
+
+$ans1 = Compute(1);
+$Items = 100;
+$H01 = random(70000, 200000);
+$H02 = random(50000, 150000);
+$H03 = random(100000, 120000);
+$H04 = random(50000, 200000);
+$H05 = random(30000, 100000);
+
+$StanDiv = $H01 + $H02 + $H03 + $H04 + $H05;
+$StanDiv = sprintf("%0.3f", $StanDiv / $Items); # Standard Divisor
+
+@Ratios = (1);
+pop @Ratios;
+@Boost = (1);
+pop @Boost;
+
+$SQuo01 = sprintf("%0.3f", $H01 / $StanDiv ); # Standard Quota
+$LQuo01 = floor($SQuo01); # Lower Quota
+$Rem01 = $SQuo01 - $LQuo01;
+push @Ratios, $Rem01; # Add extra decimal value to array
+
+$SQuo02 = sprintf("%0.3f", $H02 / $StanDiv ); # Standard Quota
+$LQuo02 = floor($SQuo02); # Lower Quota
+$Rem02 = $SQuo02 - $LQuo02;
+push @Ratios, $Rem02; # Add extra decimal value to array
+
+$SQuo03 = sprintf("%0.3f", $H03 / $StanDiv );
+$LQuo03 = floor($SQuo03); # Lower Quota
+$Rem03 = $SQuo03 - $LQuo03;
+push @Ratios, $Rem03; # Add extra decimal value to array
+
+$SQuo04 = sprintf("%0.3f", $H04 / $StanDiv );
+$LQuo04 = floor($SQuo04); # Lower Quota
+$Rem04 = $SQuo04 - $LQuo04;
+push @Ratios, $Rem04; # Add extra decimal value to array
+
+$SQuo05 = sprintf("%0.3f", $H05 / $StanDiv );
+$LQuo05 = floor($SQuo05); # Lower Quota
+$Rem05 = $SQuo05 - $LQuo05;
+push @Ratios, $Rem05; # Add extra decimal value to array
+
+$Leftovers = $SQuo01 + $SQuo02 + $SQuo03 + $SQuo04 + $SQuo05;
+$Leftovers = round($Leftovers); # Round to nearest int to ensure correct calculations
+$Leftovers -= $LQuo01;  # Subtract each lower quota from standard quota total
+$Leftovers -= $LQuo02;
+$Leftovers -= $LQuo03;
+$Leftovers -= $LQuo04;
+$Leftovers -= $LQuo05;  # Subtract final quota from standard quota total
+
+@Ratios = num_sort(@Ratios); # Sorts the decimal remainders by size, smallest to largest
+
+for($i = @Ratios; $i >= 0; $i--)
+{
+    if($Ratios[$i] == $Rem01 && $Leftovers > 0) # Current variable is large and Leftovers need to assigned
+    {
+        $Leftovers -= 1;
+        $Rem01 = 1;
+    }elsif($Ratios[$i] == $Rem01) # There are no leftovers left to be associated
+    {
+        $Rem01 = 0;
+    }
+    
+    if($Ratios[$i] == $Rem02 && $Leftovers > 0) # Current variable is large and Leftovers need to assigned
+    {
+        $Leftovers -= 1;
+        $Rem02 = 1;
+    }elsif($Ratios[$i] == $Rem02) # There are no leftovers left to be associated
+    {
+        $Rem02 = 0;
+    }
+    
+    if($Ratios[$i] == $Rem03 && $Leftovers > 0) # Current variable is large and Leftovers need to assigned
+    {
+        $Leftovers -= 1;
+        $Rem03 = 1;
+    }elsif($Ratios[$i] == $Rem03) # There are no leftovers left to be associated
+    {
+        $Rem03 = 0;
+    }
+    
+    if($Ratios[$i] == $Rem04 && $Leftovers > 0) # Current variable is large and Leftovers need to assigned
+    {
+        $Leftovers -= 1;
+        $Rem04 = 1;
+    }elsif($Ratios[$i] == $Rem04) # There are no leftovers left to be associated
+    {
+        $Rem04 = 0;
+    }
+    
+    if($Ratios[$i] == $Rem05 && $Leftovers > 0) # Current variable is large and Leftovers need to assigned
+    {
+        $Leftovers -= 1;
+        $Rem05 = 1;
+    }elsif($Ratios[$i] == $Rem05) # There are no leftovers left to be associated
+    {
+        $Rem05 = 0;
+    }
+}
+    
+BEGIN_TEXT
+
+$PAR
+A nation distributes its 100 congressional delegates amongst its 5 regions proportionally based on population.$BR
+
+The populations of the regions are given below.
+$BR
+
+$BCENTER
+\{ begintable(6) \}
+\{ row( "$SPACE Region $SPACE", "$SPACE I $SPACE", "$SPACE II $SPACE", "$SPACE III $SPACE","$SPACE IV $SPACE", "$SPACE V $SPACE" ) \}
+\{ row( "$SPACE Population $SPACE", "$SPACE $H01 $SPACE", "$SPACE $H02 $SPACE", "$SPACE $H03 $SPACE", "$SPACE $H04 $SPACE", "$SPACE $H05 $SPACE" ) \}
+\{ endtable() \}
+$BR
+Determine the Standard Divisor for this apportionment (round to three decimal places): \{ ans_rule(10) \} 
+
+$BR $BR
+Find the lower quota for each of the regions.
+$BR $BR
+Region I: \{ ans_rule(10) \} $BR $BR
+Region II: \{ ans_rule(10) \} $BR $BR
+Region III: \{ ans_rule(10) \} $BR $BR
+Region IV: \{ ans_rule(10) \} $BR $BR
+Region V: \{ ans_rule(10) \} $BR $BR
+$BR
+Use Hamilton’s Method to determine the apportionment of congressional delegates for each region: 
+$BR $BR
+Region I: \{ ans_rule(10) \} $BR $BR
+Region II: \{ ans_rule(10) \} $BR $BR
+Region III: \{ ans_rule(10) \} $BR $BR
+Region IV: \{ ans_rule(10) \} $BR $BR
+Region V: \{ ans_rule(10) \} $BR $BR
+$ECENTER
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute($StanDiv)->cmp()); # Standard divisor
+
+ANS(Compute($LQuo01)->cmp()); # Lower Quota, H1
+ANS(Compute($LQuo02)->cmp()); # Lower Quota, H2
+ANS(Compute($LQuo03)->cmp()); # Lower Quota, H3
+ANS(Compute($LQuo04)->cmp()); # Lower Quota, H4
+ANS(Compute($LQuo05)->cmp()); # Lower Quota, H5
+
+ANS(Compute($LQuo01 + $Rem01)->cmp()); # Lower Quota + Remainder, H1
+ANS(Compute($LQuo02 + $Rem02)->cmp()); # Lower Quota + Remainder, H2
+ANS(Compute($LQuo03 + $Rem03)->cmp()); # Lower Quota + Remainder, H3
+ANS(Compute($LQuo04 + $Rem04)->cmp()); # Lower Quota + Remainder, H4
+ANS(Compute($LQuo05 + $Rem05)->cmp()); # Lower Quota + Remainder, H5
+
+#ANS($StanDiv->cmp);
+
+ENDDOCUMENT();

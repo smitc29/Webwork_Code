@@ -1,0 +1,115 @@
+## KEYWORDS('voting','preference tables')
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "PGML.pl",
+  "MathObjects.pl",
+  "parserMultiAnswer.pl",
+  "scaffold.pl",
+  "PGcourse.pl",
+  "PGbasicmacros.pl",
+  "PGchoicemacros.pl",
+  "PGanswermacros.pl",
+  "PGgraphmacros.pl",
+  "extraAnswerEvaluators.pl",
+  "PGauxiliaryFunctions.pl",
+  "parserPopUp.pl",
+  "niceTables.pl",
+  #"pccTables.pl",
+  "source.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Interval");
+
+$ans1 = Compute(1);
+$Items = random(13, 17);
+$H01 = random(200, 500);
+$H02 = random(800, 1300);
+$H03 = random(400, 800);
+$H04 = random(200, 1000);
+
+$StanDiv = $H01 + $H02 + $H03 + $H04;
+$StanDiv = sprintf("%0.3f", $StanDiv / $Items); # Standard Divisor
+
+$SQuo01 = sprintf("%0.3f", $H01 / $StanDiv ); # Standard Quota
+$LQuo01 = floor($SQuo01); # Lower Quota
+$HQuo01 = ceil($SQuo01); # Upper Quota
+
+$SQuo02 = sprintf("%0.3f", $H02 / $StanDiv ); # Standard Quota
+$LQuo02 = floor($SQuo02); # Lower Quota
+$HQuo02 = ceil($SQuo02); # Upper Quota
+
+$SQuo03 = sprintf("%0.3f", $H03 / $StanDiv );
+$LQuo03 = floor($SQuo03); # Lower Quota
+$HQuo03 = ceil($SQuo03); # Upper Quota
+
+$SQuo04 = sprintf("%0.3f", $H04 / $StanDiv );
+$LQuo04 = floor($SQuo04); # Lower Quota
+$HQuo04 = ceil($SQuo04); # Upper Quota 
+
+
+BEGIN_TEXT
+
+$PAR
+Suppose $Items copier machines are to be distributed to 4 high schools, which we label H1, H2, H3, and
+H4. The populations of the high schools are:
+$BR
+
+$BCENTER
+\{ begintable(5) \}
+\{ row( "$SPACE High School $SPACE", "$SPACE H1 $SPACE", "$SPACE H2 $SPACE", "$SPACE H3 $SPACE","$SPACE H4 $SPACE" ) \}
+\{ row( "$SPACE Population $SPACE", "$SPACE $H01 $SPACE", "$SPACE $H02 $SPACE", "$SPACE $H03 $SPACE", "$SPACE $H04 $SPACE" ) \}
+\{ endtable() \}
+$BR
+Determine the Standard Divisor for this apportionment (round to three decimal places): \{ ans_rule(10) \} 
+
+$BR $BR
+Find the standard quota for each of the high schools in the above example (round to three decimal places).
+$BR $BR
+
+Standard quota for H1: \{ ans_rule(10) \} $BR $BR
+Standard quota for H2: \{ ans_rule(10) \} $BR $BR
+Standard quota for H3: \{ ans_rule(10) \} $BR $BR
+Standard quota for H4: \{ ans_rule(10) \} $BR $BR
+
+$BR
+Find the lower and upper quotas for each of the highschools in the above example.
+$BR $BR
+
+H1 Lower quota: \{ ans_rule(10) \} Upper quota: \{ ans_rule(10) \} $BR $BR
+H2 Lower quota: \{ ans_rule(10) \} Upper quota: \{ ans_rule(10) \} $BR $BR
+H3 Lower quota: \{ ans_rule(10) \} Upper quota: \{ ans_rule(10) \} $BR $BR
+H4 Lower quota: \{ ans_rule(10) \} Upper quota: \{ ans_rule(10) \} $BR $BR
+$ECENTER
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute($StanDiv)->cmp()); # Standard divisor
+
+ANS(Compute($SQuo01)->cmp()); # Standard Quota, H1
+ANS(Compute($SQuo02)->cmp()); # Standard Quota, H2
+ANS(Compute($SQuo03)->cmp()); # Standard Quota, H3
+ANS(Compute($SQuo04)->cmp()); # Standard Quota, H4 
+
+ANS(Compute($LQuo01)->cmp()); # Lower Quota, H1
+ANS(Compute($HQuo01)->cmp()); # Upper Quota, H1
+
+ANS(Compute($LQuo02)->cmp()); # Lower Quota, H2
+ANS(Compute($HQuo02)->cmp()); # Upper Quota, H2
+
+ANS(Compute($LQuo03)->cmp()); # Lower Quota, H3
+ANS(Compute($HQuo03)->cmp()); # Upper Quota, H3
+
+ANS(Compute($LQuo04)->cmp()); # Lower Quota, H4
+ANS(Compute($HQuo04)->cmp()); # Upper Quota, H4
+
+#ANS($StanDiv->cmp);
+
+
+ENDDOCUMENT();
