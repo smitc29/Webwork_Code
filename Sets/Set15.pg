@@ -1,0 +1,262 @@
+##DESCRIPTION
+##  Testing Sets with words in them
+##ENDDESCRIPTION
+
+##DBsubject(Set theory)
+##DBchapter(Basic properties and operations)
+##Date(09/08/2017)
+##Institution(SUNY Oneonta)
+##KEYWORDS('sets')
+
+########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "PGML.pl",
+  "MathObjects.pl",
+  "parserMultiAnswer.pl",
+  "PGcourse.pl",
+  "PGbasicmacros.pl",
+  "PGchoicemacros.pl",
+  "PGanswermacros.pl",
+  "extraAnswerEvaluators.pl",
+  "PGauxiliaryFunctions.pl",
+  "parserPopUp.pl",
+  "contextArbitraryString.pl"
+);
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+Context("ArbitraryString");
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 1;
+
+#An array associating each month to a number and vice versa must be separate so you don't replace a string with a number and then replace it back to a string
+%Months=(
+	"january"=>1,
+	"february"=>2,
+	"march"=>3,
+	"april"=>4,
+	"may"=>5,
+	"june"=>6
+);
+
+%str=(
+	1=>"january",
+	2=>"february",
+	3=>"march",
+	4=>"april",
+	5=>"may",
+	6=>"june"
+);
+
+#string values to hold the random sets
+$set1="";
+$set2="";
+
+#sorts out duplicates so no duplicates show up in string
+sub uniq {
+    my %seen;
+    grep !$seen{$_}++, @_;
+}
+
+
+sub ran4
+{
+	
+	my $n=4;#size of array
+	
+        my @arr;
+        my $j = 0;
+	while(@arr < $n)
+	{
+		push @arr, random(1,6); # add random nummber in interval
+                last if $j > 4;  #failsafe 
+                $j++;
+	}
+	#
+	#
+	#
+	@arr = uniq(@arr); #sort out duplicates
+	@arr = PGsort(sub {$_[0] < $_[1]} ,@arr); #PG sort sorts an array/list using rules determined on the left in this case sorts from smallest to largest
+	# you may also sort even and odd and sort number and string variables as well using PGsort
+	
+	foreach $i(@arr){ #this adds the set into the string
+	$set1.=$str{$i}; #adds the month corresponding to the number
+	$set1.=','; #followed by commas
+	}
+	$set1=~ s/,$//;#removes the additional comma at the end of string
+	
+	return @arr; #returns the array
+}
+
+sub ran3
+{
+	
+	my $n=3;#size of array
+	
+        my @arr;
+        my $j = 0;
+	while(@arr < $n)
+	{
+		push @arr, random(1,6);
+                last if $j > 3;  #failsafe 
+                $j++;
+	}
+	
+	@arr = uniq(@arr);
+	@arr = PGsort(sub {$_[0] < $_[1]} ,@arr);
+	
+	foreach $i(@arr){
+	$set2.=$str{$i};
+	$set2.=',';
+	}
+	$set2=~ s/,$//;
+	
+	return @arr;
+}
+
+$A=Set(ran4()); #random set containing elements of an array
+$B=Set(ran3());
+$ans2=Set($A->intersect($B));
+$ans1=Set($A+$B);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+For the sets 
+$PAR 
+A = \($LBRACE $set1 $RBRACE\)
+and 
+B = \($LBRACE $set2 $RBRACE\)
+$PAR 
+Note:You may write the empty set as "empty set"
+$PAR
+Find \(A \cup B \) \{ans_rule(80)\}
+$PAR
+Find \(A \cap B \) \{ans_rule(80)\}
+$PAR
+$PAR
+Is \(A \cap B \) \( \subseteq \) \( A \cup B \)? \{ans_rule(80)\}
+
+END_TEXT
+Context()->normalStrings;
+
+#\( ...\)
+
+#ANS is answer checker goes same order as problems
+ANS(Compute("{january,february,march,april,may,june}")->cmp(
+checker => sub
+{	
+	Context("ArbitraryString");
+	  
+      my ($correct, $student, $ansHash) = @_;
+	
+     # strip any blank spaces (this is slightly less than ideal
+     # s/\s+//g should work but doesn't strip white space for some reason)
+     $student =~ s/ //g;
+
+     # Check that the first character is a curly brace
+     if ($student !~ /^{/) { 
+        Value->Error("A set must start with a curly-brace '{'");
+     }
+     # Check that the last character is a curly brace
+     if ($student !~ /}$/) { 
+        Value->Error("A set must end with a curly-brace '}'");
+     }
+	 #converting everything to lower case to make everything case insenstitive.
+	 $student = lc $student;
+	 #
+	 # Converts each month to its corresponding number. 
+     #
+     foreach $i(keys %Months) {
+           $student =~ s/$i/$Months{$i}/;       
+     }
+	#
+	$student =~ s/{//;
+        $student =~ s/}//;
+	#
+	#
+    @sans = split(',', $student);
+	#create a set from numbers
+	$stdnt=Set(@sans);
+	
+	#
+	#chacks if both sets contain each other
+	if($stdnt->contains($ans1) and $ans1->contains($stdnt))
+	{
+		return 1;
+	}else{
+		Value->Error(("Your solution is missing at least one correct element, or check your commas"));
+	}
+    #
+}));
+ANS(Compute("{january,february,march,april,may,june}")->cmp(
+checker => sub
+{
+	Context("ArbitraryString");
+	  
+      my ($correct, $student, $ansHash) = @_;
+	
+     # strip any blank spaces (this is slightly less than ideal
+     # s/\s+//g should work but doesn't strip white space for some reason)
+     $student =~ s/ //g;
+
+
+     # Check that the first character is a curly brace
+     if ($student !~ /^{/) { 
+        Value->Error("A set must start with a curly-brace '{'");
+     }
+     # Check that the last character is a curly brace
+     if ($student !~ /}$/) { 
+        Value->Error("A set must end with a curly-brace '}'");
+     }
+	 #converting everything to lower case to make everything case insenstitive.
+	 $student = lc $student;
+	 #
+	 # Converts each month to its corresponding number. 
+     #
+     foreach $i(keys %Months) {
+           $student =~ s/$i/$Months{$i}/;       
+     }
+	#
+	$student =~ s/{//;
+        $student =~ s/}//;
+	#
+	#
+    @sans = split(',', $student);
+	#create a set from numbers
+	$stdnt=Set(@sans);
+	#
+	#chacks if both sets contain each other
+	if($stdnt->contains($ans2) and $ans2->contains($stdnt))
+	{
+		return 1;
+	}else{
+		Value->Error(("Your solution is missing at least one correct element, or check your commas"));
+    }
+	#
+}));
+
+ANS(Compute("yes")->cmp(checker => sub
+{
+	  
+      my ($correct, $student, $ansHash) = @_;
+	
+     # strip any blank spaces (this is slightly less than ideal
+     # s/\s+//g should work but doesn't strip white space for some reason)
+     $student =~ s/ //g;
+
+	 #converting everything to lower case to make everything case insenstitive.
+	 $student = lc $student;
+	
+	if($student == "yes"){
+		return 1;
+	}else{
+		Value->Error(("Your solution is wrong"));
+	}
+}));
+
+
+ENDDOCUMENT();

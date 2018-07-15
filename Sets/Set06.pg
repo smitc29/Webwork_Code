@@ -1,0 +1,133 @@
+## KEYWORDS('sets','set','set theory',’union’,'intersection')
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "PGML.pl",
+  "MathObjects.pl",
+  "parserMultiAnswer.pl",
+  "scaffold.pl",
+  "PGcourse.pl",
+  "PGbasicmacros.pl",
+  "PGchoicemacros.pl",
+  "PGanswermacros.pl",
+  "PGgraphmacros.pl",
+  "extraAnswerEvaluators.pl",
+  "PGauxiliaryFunctions.pl",
+  "parserPopUp.pl",
+  "niceTables.pl",
+  "pccTables.pl",
+  "contextArbitraryString.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("ArbitraryString");
+%U=(
+	"sally"=>1,
+	"robert"=>2,
+	"juan"=>3,
+	"mikaila"=>4,
+	"randal"=>5,
+	"saul"=>6
+);
+$univ=(1,2,3,4,5,6);
+
+Context()->texStrings;
+BEGIN_TEXT
+Six students were asked whether they like coffee, tea, or soda. Use the table below to answer the following questions.
+
+\{ begintable(4) \}
+\{ row( "Drink", "Coffee", "Tea", "Soda" ) \}
+\{ row( "Sally", "Yes", "No", "Yes" ) \}
+\{ row( "Robert", "No", "No", "Yes" ) \}
+\{ row( "Juan", "Yes", "No", "No" ) \}
+\{ row( "Mikaila", "No", "No", "No" ) \}
+\{ row( "Randal", "Yes", "Yes", "Yes" ) \}
+\{ row( "Saul", "No", "Yes", "No" ) \}
+\{ endtable() \}
+$PAR
+The universe is \(U = $LBRACE Sally, Robert, Juan, Mikaila, Randall, Saul $RBRACE \). Let \(C\) be the set of coffee, \(T\) the set of students who like tea, and \(S\)  the set of students who like soda.
+$PAR
+Find the set of students who liked both coffee and soda. \{ans_rule(80)\}
+$PAR
+Find \(C \cap S\). \{ans_rule(119)\}
+$PAR
+END_TEXT
+Context()->normalStrings;
+ANS(Compute("The string I want")->cmp(checker => sub{
+	$ans=Set(1,5);
+	my ($correct, $student, $ansHash) = @_;
+	
+	$student =~ s/ //g;
+	
+	if ($student !~ /^{/) { 
+        Value->Error("A set must start with a curly-brace '{'");
+     }
+	 
+	 if ($student !~ /}$/) { 
+        Value->Error("A set must end with a curly-brace '}'");
+     }
+	 
+	 $student = lc $student;
+	 
+	 foreach $a(keys %U) {
+           $student =~ s/$a/$U{$a}/;       
+     }
+
+	$student =~ s/{//;
+        $student =~ s/}//;
+
+	@sans = split(',', $student);
+	
+	$stdnt=Set(@sans);
+	
+	if($stdnt->contains($ans) and $ans->contains($stdnt))
+	{
+		return 1;
+	}else{
+		Value->Error(("Your solution is missing at least one correct element, or check your commas"));
+	}
+
+}));
+
+ANS(Compute("The string I want")->cmp(checker => sub{
+	$ans=Set(1,5);
+	my ($correct, $student, $ansHash) = @_;
+	
+	$student =~ s/ //g;
+	
+	if ($student !~ /^{/) { 
+        Value->Error("A set must start with a curly-brace '{'");
+     }
+	 
+	 if ($student !~ /}$/) { 
+        Value->Error("A set must end with a curly-brace '}'");
+     }
+	 
+	 $student = lc $student;
+	 
+	 foreach $a(keys %U) {
+           $student =~ s/$a/$U{$a}/;       
+     }
+
+	$student =~ s/{//;
+        $student =~ s/}//;
+
+	@sans = split(',', $student);
+	
+	$stdnt=Set(@sans);
+	
+	if($stdnt->contains($ans) and $ans->contains($stdnt))
+	{
+		return 1;
+	}else{
+		Value->Error(("Your solution is missing at least one correct element, or check your commas"));
+	}
+
+}));
+
+
+
+ENDDOCUMENT();
