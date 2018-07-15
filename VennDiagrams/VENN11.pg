@@ -1,0 +1,159 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+
+
+## DBsubject(WeBWorK)
+## DBchapter(Numeration)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(01/30/2011)
+## Institution(Fort Lewis College)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('venn','sets')
+
+
+###########################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "AnswerFormatHelp.pl",
+  "PGcourse.pl"
+);
+
+TEXT(beginproblem());
+
+
+###########################
+#  Setup
+
+Context("Numeric");
+Context()->strings->add(I => {}, II => {}, III => {}, IV => {}, V => {}, VI => {}, VII => {}, VIII => {});
+
+# Randomly generate order to solve shapes
+
+$order = random(1, 6);
+
+if($order==1) # Circle, Plaid, Tri
+{
+	$Ans01 = 'VII';
+	$Pic01 = image("BlueCircle.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Blue Circle."');
+	$Ans02 = 'V';
+	$Pic02 = image("Plaid.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Checkered Rectangle."');
+	$Ans03 = 'VIII';
+	$Pic03 = image("Tri.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Hollow Triangle."');
+}
+
+if($order==2) # Circle, Tri, Plaid
+{
+	$Ans01 = 'VII';
+	$Pic01 = image("BlueCircle.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Blue Circle."');
+	$Ans03 = 'V';
+	$Pic03 = image("Plaid.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Checkered Rectangle."');
+	$Ans02 = 'VIII';
+	$Pic02 = image("Tri.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Hollow Triangle."');
+}
+
+if($order==3) # Plaid, Circle, Tri
+{
+	$Ans02 = 'VII';
+	$Pic02 = image("BlueCircle.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Blue Circle."');
+	$Ans01 = 'V';
+	$Pic01 = image("Plaid.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Checkered Rectangle."');
+	$Ans03 = 'VIII';
+	$Pic03 = image("Tri.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Hollow Triangle."');
+}
+
+if($order==4) # Plaid, Tri, Circle
+{
+	$Ans03 = 'VII';
+	$Pic03 = image("BlueCircle.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Blue Circle."');
+	$Ans01 = 'V';
+	$Pic01 = image("Plaid.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Checkered Rectangle."');
+	$Ans02 = 'VIII';
+	$Pic02 = image("Tri.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Hollow Triangle."');
+}
+
+if($order==5) # Tri, Circle, Plaid
+{
+	$Ans02 = 'VII';
+	$Pic02 = image("BlueCircle.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Blue Circle."');
+	$Ans03 = 'V';
+	$Pic03 = image("Plaid.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Checkered Rectangle."');
+	$Ans01 = 'VIII';
+	$Pic01 = image("Tri.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Hollow Triangle."');
+}
+
+if($order==6) # Tri, Plaid, Circle
+{
+	$Ans03 = 'VII';
+	$Pic03 = image("BlueCircle.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Blue Circle."');
+	$Ans02 = 'V';
+	$Pic02 = image("Plaid.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Checkered Rectangle."');
+	$Ans01 = 'VIII';
+	$Pic01 = image("Tri.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Hollow Triangle."');
+}
+
+
+
+
+
+
+###########################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+ Let A be the set of all figures rectangles, B the set of all figures with a checkerboard pattern, and C the set of $BR
+
+all solid figures. Determine the Venn diagram region for each of the following objects. (Use Roman numerals in your answer)
+$BCENTER
+\{ image("venndiag2.png",width=>381,height=>294,tex_size=>40, extra_html_tags=>'alt="Venn Diagram."') \}
+$BR $BR
+$Pic01
+\{ ans_rule(20) \}
+$BR $BR
+$Pic02
+\{ ans_rule(20) \}
+$BR $BR
+$Pic03
+\{ ans_rule(20) \}
+$ECENTER
+$BR 
+
+$BR
+
+END_TEXT
+Context()->normalStrings;
+#\{ AnswerFormatHelp("numbers") \} Use this in texStrings to allows students to see formulas
+
+############################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS( Compute($Ans01)->cmp());
+ANS( Compute($Ans02)->cmp());
+ANS( Compute($Ans03)->cmp());
+
+
+
+############################
+#  Solution
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+$Ans01 , $Ans02 , $Ans03
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+ENDDOCUMENT();

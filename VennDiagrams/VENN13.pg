@@ -1,0 +1,115 @@
+## DESCRIPTION
+## Formula answer template
+## ENDDESCRIPTION
+
+
+## DBsubject(WeBWorK)
+## DBchapter(Numeration)
+## DBsection(Fort Lewis tutorial 2011)
+## Date(01/30/2011)
+## Institution(Fort Lewis College)
+## Author(Christopher Smith)
+## MO(1)
+## KEYWORDS('venn','sets')
+
+
+###########################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "AnswerFormatHelp.pl",
+  #"source.pl",        # allows code to be displayed on certain sites.
+   "PGcourse.pl",      # Customization file for the course
+   "parserAutoStrings.pl" #allows easy definition of strings
+);
+
+
+TEXT(beginproblem());
+
+
+###########################
+#  Setup
+
+# Context shouldn't matter here, since we want string answers.
+Context("Interval");
+DefineStrings("I","II","III","IV","V","VI","VII","VIII");
+
+Context()->strings->add(none=>{caseSensitive=>0}); # As long as the right letter is entered it's good
+
+# Randomly generate order to solve shapes
+
+ # Circle, Plaid, Tri
+
+	$Ans01 = 'V';
+	$Pic01 = image("BlueCircle.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Blue Circle."');
+	$Ans02 = 'IV';
+	$Pic02 = image("Plaid.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Checkered Rectangle."');
+	$Ans03 = 'VIII';
+	$Pic03 = image("Tri.png",width=>60,height=>84,tex_size=>40, extra_html_tags=>'alt="Hollow Triangle."');
+
+
+
+
+
+
+###########################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+ List all the regions of the Venn diagram included in the following sets. (Use Roman numerals in your answer)
+ $BR
+ When listing multiple regions, use a comma and space to seperate the values. 
+$BCENTER
+\{ image("venndiag2.png",width=>381,height=>294,tex_size=>40, extra_html_tags=>'alt="Venn Diagram."') \}
+$BR $BR
+\(A - B\)
+\{ ans_rule(20) \}
+$BR $BR
+\(A - C\)
+\{ ans_rule(20) \}
+$BR $BR
+\( (A - B) \cap (A - C) \)
+\{ ans_rule(20) \}
+$BR $BR
+\( A - (B \cup C) \)
+\{ ans_rule(20) \}
+
+$ECENTER
+$BR 
+
+$BR
+
+END_TEXT
+Context()->normalStrings;
+#\{ AnswerFormatHelp("numbers") \} Use this in texStrings to allows students to see formulas
+
+############################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS(List("I, IV")->cmp);
+ANS(List("I, II")->cmp);
+ANS(List("I")->cmp);
+ANS(List("I")->cmp);
+
+############################
+#  Solution
+
+Context()->texStrings;
+#BEGIN_SOLUTION
+
+#$Ans01 , $Ans02 , $Ans03
+
+#END_SOLUTION
+Context()->normalStrings;
+
+
+
+ENDDOCUMENT();
